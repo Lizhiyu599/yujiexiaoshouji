@@ -81,17 +81,19 @@ dragHandle.addEventListener('touchend', function(e) {
   setTimeout(function() { dragDistance = 0; }, 300);
 });
 
-// 折叠/展开
-document.querySelectorAll('.widget-header').forEach(function(header) {
-  header.addEventListener('click', function() {
-    var body = header.nextElementSibling;
-    var icon = header.querySelector('.toggle-icon');
-    if (body.classList.contains('open')) {
-      body.classList.remove('open');
-      icon.textContent = '›';
-    } else {
-      body.classList.add('open');
-      icon.textContent = '∨';
-    }
+// 折叠/展开（延迟执行，等待 DOM 渲染）
+setTimeout(function() {
+  document.querySelectorAll('.widget-header').forEach(function(header) {
+    header.addEventListener('click', function() {
+      var body = header.nextElementSibling;
+      var icon = header.querySelector('.toggle-icon');
+      if (body.classList.contains('open')) {
+        body.classList.remove('open');
+        icon.textContent = '›';
+      } else {
+        body.classList.add('open');
+        icon.textContent = '∨';
+      }
+    });
   });
-});
+}, 200);
