@@ -9,6 +9,24 @@ let isDragging = false;
 let startY = 0;
 let dragDistance = 0;
 
+// ── 长按桌面空白处显示加号 ──
+let longPressTimer;
+const desktopStage = document.getElementById('desktopStage');
+
+desktopStage.addEventListener('touchstart', function(e) {
+  longPressTimer = setTimeout(function() {
+    addButton.classList.remove('hidden');
+  }, 500);
+});
+
+desktopStage.addEventListener('touchend', function() {
+  clearTimeout(longPressTimer);
+});
+
+desktopStage.addEventListener('touchmove', function() {
+  clearTimeout(longPressTimer);
+});
+
 function openPanel() {
   panel.classList.remove('hidden');
   overlay.style.display = 'block';
