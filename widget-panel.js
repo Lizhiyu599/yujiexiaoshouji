@@ -11,7 +11,8 @@ let dragDistance = 0;
 
 // ── 先改成点击触发测试 ──
 let longPressTimer;
-const desktopStage = document.getElementById('desktopStage');
+ const desktopStage = document.getElementById('desktopStage');
+console.log('desktopStage:', desktopStage);
 
 desktopStage.addEventListener('click', function(e) {
   addButton.classList.remove('hidden');
