@@ -8,7 +8,6 @@
   <meta name="mobile-web-app-capable" content="yes">
   <title>玉界机 · 桌面框架</title>
   <style>
-    /* 全局重置 & 手机优先基础 */
     * {
       margin: 0;
       padding: 0;
@@ -19,15 +18,14 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      touch-action: pan-x; /* 允许水平滑动，垂直禁止 */
-      background: #000;
+      touch-action: pan-x;
+      background: #FFFFFF;
       font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
     }
 
-    /* 主容器：固定视口，禁止滚动 */
     #app-root {
       width: 100vw;
       height: 100vh;
@@ -35,20 +33,18 @@
       flex-direction: column;
       overflow: hidden;
       position: relative;
-      background: #1c1c1e; /* 深色模式底色，接近iOS桌面 */
+      background: #FFFFFF;
     }
 
-    /* 桌面区域：占据除Dock外的全部高度 */
     .desktop-stage {
       flex: 1;
       width: 100%;
       position: relative;
       overflow: hidden;
       touch-action: pan-x;
-      padding-bottom: 6px; /* 让底部指示器与Dock有呼吸感 */
+      padding-bottom: 8px;
     }
 
-    /* 分页视口：承载所有页面，水平滑动 */
     .pages-viewport {
       display: flex;
       height: 100%;
@@ -65,7 +61,6 @@
       display: none;
     }
 
-    /* 单个页面：100%宽度，网格容器 */
     .desktop-page {
       flex: 0 0 100%;
       width: 100%;
@@ -76,115 +71,126 @@
       grid-template-columns: repeat(6, 1fr);
       grid-template-rows: repeat(4, 1fr);
       gap: 0;
-      padding: 12px 10px; /* 稍微内边距让网格内容不贴边 */
+      padding: 14px 12px;
     }
 
-    /* 桌面元素通用样式 (未来动态添加) */
     .desktop-item {
       position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      border-radius: 22px;
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-      color: white;
-      font-size: 12px;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.04);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      color: #1d1d1f;
+      font-size: 11px;
       font-weight: 500;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
       overflow: hidden;
-      transition: transform 0.15s ease;
+      transition: transform 0.18s ease;
     }
 
-    /* ---------- Dock区域 · iOS风格重构 ---------- */
-    .dock-container {
-      width: 100%;
-      height: 84px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border-top: 0.5px solid rgba(255, 255, 255, 0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 20px 12px;
-      box-shadow: 0 -8px 30px rgba(0,0,0,0.4);
-      z-index: 20;
-      border-radius: 36px 36px 0 0; /* 上方圆角，更像iOS Dock */
-      margin: 0 8px; /* 两侧留一点间距 */
-      position: relative;
-    }
-
-    .dock-items {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-      align-items: center;
-      width: 100%;
-      max-width: 380px;
-      height: 100%;
-      gap: 10px;
-    }
-
-    .dock-slot {
-      flex: 1;
-      aspect-ratio: 1/1;
-      max-width: 56px;
-      height: 56px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      color: rgba(255,255,255,0.7);
-      font-size: 26px;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      border: 0.5px solid rgba(255,255,255,0.1);
-    }
-
-    /* 页面指示器 · 重新设计：优雅浅色小横条 */
+    /* ── 页面指示器 ── */
     .page-indicator {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 8px;
-      padding: 8px 0 6px;
-      height: 24px;
+      gap: 7px;
+      padding: 6px 0 10px;
+      height: 22px;
       background: transparent;
-      margin-bottom: 2px; /* 与Dock自然衔接 */
+      margin-bottom: 4px;
     }
 
     .indicator-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 3.5px;
-      background: rgba(255, 255, 255, 0.35);
+      width: 6px;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(0, 0, 0, 0.2);
       transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
     }
 
     .indicator-dot.active {
-      width: 18px;
-      background: rgba(255, 255, 255, 0.9);
-      box-shadow: 0 0 8px rgba(255,255,255,0.4);
-      border-radius: 4px;
+      width: 16px;
+      background: rgba(0, 0, 0, 0.55);
+      border-radius: 3px;
     }
 
-    /* 翻页过渡增强：轻微缩放与透明度变化 (应用于页面) */
+    /* ── 翻页微效 ── */
     .desktop-page {
-      transition: opacity 0.25s ease, transform 0.25s ease;
+      transition: opacity 0.28s ease, transform 0.28s ease;
     }
-    /* 通过JS动态添加类来控制非激活页面的微效果，此处仅为预留样式 */
     .desktop-page.inactive-page {
-      opacity: 0.7;
-      transform: scale(0.98);
+      opacity: 0.75;
+      transform: scale(0.985);
+    }
+
+    /* ══════════════════════════════════════
+       Dock · 悬浮胶囊 · 高透磨砂玻璃
+       ══════════════════════════════════════ */
+    .dock-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      width: 100%;
+      padding: 0 20px 20px; /* 底部安全间距 */
+      background: transparent;
+      pointer-events: none; /* 让点击穿透到Dock内部 */
+    }
+
+    .dock-capsule {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 22px;
+      border-radius: 40px; /* 完全圆润胶囊 */
+      background: rgba(255, 255, 255, 0.72);
+      /* 核心：高透磨砂玻璃 */
+      backdrop-filter: blur(22px) saturate(180%);
+      -webkit-backdrop-filter: blur(22px) saturate(180%);
+      /* 极细腻的光泽与边缘 */
+      box-shadow:
+        0 2px 12px rgba(0, 0, 0, 0.04),
+        0 0.5px 0 0 rgba(255, 255, 255, 0.6) inset,
+        0 0 0 0.5px rgba(0, 0, 0, 0.06);
+      transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+      max-width: 340px;
+      width: fit-content;
+      margin: 0 auto;
+    }
+
+    .dock-slot {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.03);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.22s cubic-bezier(0.25, 0.1, 0.25, 1);
+      color: #1d1d1f;
+      font-size: 24px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 0.5px 1px rgba(0,0,0,0.04);
+      position: relative;
+    }
+
+    /* 占位图标圆角方形风格 */
+    .dock-slot-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #1d1d1f;
     }
   </style>
 </head>
@@ -192,59 +198,36 @@
   <div id="app-root">
     <!-- 桌面舞台 -->
     <div class="desktop-stage" id="desktopStage">
-      <div class="pages-viewport" id="pagesViewport">
-        <!-- 动态生成页面容器 -->
-      </div>
+      <div class="pages-viewport" id="pagesViewport"></div>
     </div>
 
-    <!-- 页面指示器 (位于Dock上方) -->
+    <!-- 页面指示器 -->
     <div class="page-indicator" id="pageIndicator"></div>
 
-    <!-- Dock 区域 -->
-    <div class="dock-container">
-      <div class="dock-items" id="dockItems">
-        <!-- 动态生成Dock槽位 (最多4个) -->
-      </div>
+    <!-- Dock 悬浮容器 -->
+    <div class="dock-wrapper">
+      <div class="dock-capsule" id="dockCapsule"></div>
     </div>
   </div>
 
   <script type="module">
-    // ==========================================
-    // 玉界机 · 桌面系统底层框架 (优化版)
-    // 模块化：页面、网格、Dock、元素管理
-    // 仅搭建架构，无任何示例应用/图标
-    // ==========================================
+    // ══════════════════════════════════════
+    // 玉界机 · 桌面底层框架 (纯白通透版)
+    // ══════════════════════════════════════
 
-    /**
-     * 桌面元素统一数据结构
-     * @typedef {Object} DesktopItem
-     * @property {string} id
-     * @property {'app'|'widget'} type
-     * @property {number} pageIndex
-     * @property {number} gridX
-     * @property {number} gridY
-     * @property {number} width
-     * @property {number} height
-     * @property {string} name
-     * @property {Object} [meta]
-     */
-
-    // 全局元素注册表 (当前为空)
     const desktopItems = new Map();
 
-    // 页面状态
     const pageState = {
-      count: 3,             // 动态页数，初始3页展示分页效果
+      count: 3,
       currentPage: 0,
     };
 
-    // Dock 数据 (最多4个槽位)
     const dockState = {
-      items: [],            // 存放应用ID
+      items: [],
       maxSlots: 4,
     };
 
-    // ---------- 元素管理器 ----------
+    // ── 元素管理器 ──
     const ElementManager = {
       addItem(item) {
         if (!item.id || !item.type) return;
@@ -255,8 +238,8 @@
         desktopItems.delete(id);
         this.renderAllPages();
       },
-      getItemsByPage(pageIndex) {
-        return Array.from(desktopItems.values()).filter(item => item.pageIndex === pageIndex);
+      getItemsByPage(idx) {
+        return Array.from(desktopItems.values()).filter(i => i.pageIndex === idx);
       },
       getGridStyle(item) {
         return {
@@ -269,58 +252,46 @@
       }
     };
 
-    // ---------- 网格系统 ----------
+    // ── 网格系统 ──
     const GridSystem = {
       columns: 6,
       rows: 4,
-      isValidPlacement(gridX, gridY, width, height) {
-        return gridX >= 0 && gridY >= 0 && gridX + width <= this.columns && gridY + height <= this.rows;
-      },
-      checkCollision(pageIndex, ignoreId, gridX, gridY, width, height) {
-        const items = ElementManager.getItemsByPage(pageIndex);
-        return items.some(item => {
-          if (item.id === ignoreId) return false;
-          return gridX < item.gridX + item.width && gridX + width > item.gridX &&
-                 gridY < item.gridY + item.height && gridY + height > item.gridY;
-        });
+      isValid(gx, gy, w, h) {
+        return gx>=0 && gy>=0 && gx+w<=this.columns && gy+h<=this.rows;
       }
     };
 
-    // ---------- Dock 系统 (iOS风格) ----------
+    // ── Dock 系统 (悬浮胶囊) ──
     const DockSystem = {
       render() {
-        const container = document.getElementById('dockItems');
-        if (!container) return;
-        container.innerHTML = '';
+        const capsule = document.getElementById('dockCapsule');
+        if (!capsule) return;
+        capsule.innerHTML = '';
         for (let i = 0; i < this.maxSlots; i++) {
           const slot = document.createElement('div');
           slot.className = 'dock-slot';
-          slot.dataset.slotIndex = i;
           const itemId = dockState.items[i] || null;
           if (itemId && desktopItems.has(itemId)) {
             const item = desktopItems.get(itemId);
-            slot.textContent = item.name?.charAt(0) || '●';
-            slot.style.background = 'rgba(255,255,255,0.25)';
-            slot.style.color = 'white';
+            slot.innerHTML = `<div class="dock-slot-icon">${item.name?.charAt(0) || '●'}</div>`;
           } else {
-            slot.textContent = '';
-            slot.style.background = 'rgba(255,255,255,0.12)';
+            slot.innerHTML = `<div class="dock-slot-icon" style="background:transparent; color:#b0b0b0;">○</div>`;
           }
-          container.appendChild(slot);
+          capsule.appendChild(slot);
         }
       },
       get maxSlots() { return dockState.maxSlots; },
-      addToDock(itemId) {
+      addToDock(id) {
         if (dockState.items.length >= this.maxSlots) return false;
-        if (!dockState.items.includes(itemId)) {
-          dockState.items.push(itemId);
+        if (!dockState.items.includes(id)) {
+          dockState.items.push(id);
           this.render();
           return true;
         }
         return false;
       },
-      removeFromDock(itemId) {
-        const idx = dockState.items.indexOf(itemId);
+      removeFromDock(id) {
+        const idx = dockState.items.indexOf(id);
         if (idx > -1) {
           dockState.items.splice(idx, 1);
           this.render();
@@ -328,7 +299,7 @@
       }
     };
 
-    // ---------- 页面管理 & 分页系统 (优化翻页效果) ----------
+    // ── 页面管理 ──
     const PageManager = {
       viewport: null,
       indicator: null,
@@ -342,134 +313,81 @@
 
       renderPages() {
         if (!this.viewport) return;
-        const currentScrollLeft = this.viewport.scrollLeft;
-        const pageWidth = this.viewport.clientWidth;
-
+        const scrollLeft = this.viewport.scrollLeft;
+        const pw = this.viewport.clientWidth;
         this.viewport.innerHTML = '';
         for (let i = 0; i < pageState.count; i++) {
           const page = document.createElement('div');
           page.className = 'desktop-page';
           page.dataset.pageIndex = i;
-          
           const items = ElementManager.getItemsByPage(i);
           items.forEach(item => {
-            const el = this.createDesktopElement(item);
+            const el = document.createElement('div');
+            el.className = 'desktop-item';
+            const gs = ElementManager.getGridStyle(item);
+            el.style.gridColumn = gs.gridColumn;
+            el.style.gridRow = gs.gridRow;
+            el.innerHTML = `<div style="font-size:28px; margin-bottom:3px; opacity:0.7;">${item.type==='widget'?'▣':'◎'}</div><span style="font-size:11px;">${item.name||''}</span>`;
             page.appendChild(el);
           });
-          
           this.viewport.appendChild(page);
         }
-
         this.renderIndicator();
-        this.applyPageTransitions(); // 应用微妙的翻页视觉效果
-
+        this.applyPageTransitions();
         requestAnimationFrame(() => {
-          if (this.viewport && pageWidth > 0) {
-            this.viewport.scrollLeft = Math.min(currentScrollLeft, (pageState.count - 1) * pageWidth);
-            this.updateActivePageVisual();
+          if (this.viewport && pw>0) {
+            this.viewport.scrollLeft = Math.min(scrollLeft, (pageState.count-1)*pw);
+            this.updateActivePage();
           }
         });
-      },
-
-      createDesktopElement(item) {
-        const div = document.createElement('div');
-        div.className = 'desktop-item';
-        div.dataset.itemId = item.id;
-        const style = ElementManager.getGridStyle(item);
-        div.style.gridColumn = style.gridColumn;
-        div.style.gridRow = style.gridRow;
-        div.innerHTML = `
-          <div style="font-size: 30px; margin-bottom: 4px; filter: drop-shadow(0 2px 4px black);">${item.type === 'widget' ? '▣' : '◎'}</div>
-          <span style="font-size:11px; text-align:center; line-height:1.2; opacity:0.9;">${item.name || ''}</span>
-        `;
-        return div;
       },
 
       renderIndicator() {
         if (!this.indicator) return;
         this.indicator.innerHTML = '';
-        for (let i = 0; i < pageState.count; i++) {
-          const dot = document.createElement('span');
-          dot.className = 'indicator-dot';
-          if (i === pageState.currentPage) dot.classList.add('active');
-          dot.dataset.page = i;
-          dot.addEventListener('click', () => this.scrollToPage(i));
-          this.indicator.appendChild(dot);
+        for (let i=0;i<pageState.count;i++) {
+          const d = document.createElement('span');
+          d.className = 'indicator-dot';
+          if (i===pageState.currentPage) d.classList.add('active');
+          d.addEventListener('click', ()=>this.scrollToPage(i));
+          this.indicator.appendChild(d);
         }
       },
 
-      /* 翻页视觉增强：非当前页面轻微透明+缩放 */
       applyPageTransitions() {
-        const pages = document.querySelectorAll('.desktop-page');
-        pages.forEach((page, index) => {
-          if (index !== pageState.currentPage) {
-            page.classList.add('inactive-page');
-          } else {
-            page.classList.remove('inactive-page');
-          }
+        document.querySelectorAll('.desktop-page').forEach((p,idx)=>{
+          p.classList.toggle('inactive-page', idx!==pageState.currentPage);
         });
       },
 
-      updateActivePageVisual() {
+      updateActivePage() {
         if (!this.viewport) return;
-        const pageWidth = this.viewport.clientWidth;
-        if (pageWidth <= 0) return;
-        const current = Math.round(this.viewport.scrollLeft / pageWidth);
-        if (current !== pageState.currentPage) {
-          pageState.currentPage = current;
+        const pw = this.viewport.clientWidth;
+        if (pw<=0) return;
+        const cur = Math.round(this.viewport.scrollLeft/pw);
+        if (cur!==pageState.currentPage) {
+          pageState.currentPage = cur;
           this.renderIndicator();
           this.applyPageTransitions();
         }
       },
 
       setupScrollListener() {
-        if (!this.viewport) return;
-        this.viewport.addEventListener('scroll', () => {
-          this.updateActivePageVisual();
-        }, { passive: true });
+        this.viewport?.addEventListener('scroll', ()=>this.updateActivePage(), {passive:true});
       },
 
-      scrollToPage(index) {
-        if (!this.viewport || index < 0 || index >= pageState.count) return;
-        const pageWidth = this.viewport.clientWidth;
-        this.viewport.scrollTo({ left: index * pageWidth, behavior: 'smooth' });
-      },
-
-      addPage() {
-        pageState.count += 1;
-        this.renderPages();
-      },
-      removePage(index) {
-        if (pageState.count <= 1) return;
-        const items = ElementManager.getItemsByPage(index);
-        if (items.length > 0) return;
-        desktopItems.forEach((item, id) => {
-          if (item.pageIndex > index) item.pageIndex -= 1;
-        });
-        pageState.count -= 1;
-        if (pageState.currentPage >= pageState.count) pageState.currentPage = pageState.count - 1;
-        this.renderPages();
+      scrollToPage(i) {
+        if (!this.viewport||i<0||i>=pageState.count) return;
+        this.viewport.scrollTo({left:i*this.viewport.clientWidth, behavior:'smooth'});
       }
     };
 
-    // ---------- 启动框架 ----------
+    // 启动
     function bootstrap() {
       DockSystem.render();
       PageManager.init();
-      console.log('玉界机桌面框架已启动 (优化版) - 页数:', pageState.count);
-      
-      // 调试/扩展接口
-      window.__JadeWorld = {
-        ElementManager,
-        GridSystem,
-        DockSystem,
-        PageManager,
-        desktopItems,
-        pageState,
-        dockState,
-      };
+      console.log('玉界机·桌面框架 (纯白悬浮Dock)');
     }
-
     bootstrap();
   </script>
 </body>
