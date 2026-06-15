@@ -576,7 +576,7 @@
 
     bootstrap();
 
-    window.__JadeWorld = {
+        window.__JadeWorld = {
       ElementManager,
       GridSystem,
       DockSystem,
@@ -585,12 +585,13 @@
       pageState,
       dockState,
     };
-  
+  </script>
+
   <!-- 注册 Service Worker -->
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js');
-  }
-</script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/yujiexiaoshouji/sw.js');
+    }
+  </script>
 </body>
 </html>
