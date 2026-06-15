@@ -18,7 +18,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #FFFFFF;
+      background: #e8e8ed;
       font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
@@ -33,7 +33,7 @@
       flex-direction: column;
       overflow: hidden;
       position: relative;
-      background: #FFFFFF;
+      background: #e8e8ed;
     }
 
     .desktop-stage {
@@ -78,45 +78,51 @@
     }
 
     /* ══════════════════════════════════════
-       分页指示器 · 重新设计
-       统一圆点 · 仅颜色区分 · 缩小尺寸
+       分页指示器 · 最多显示3个 · 透壁纸色块
        ══════════════════════════════════════ */
     .page-indicator {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 7px;
-      padding: 12px 0 16px;
-      height: 24px;
+      gap: 6px;
+      padding: 8px 0 18px;
+      height: 22px;
       background: transparent;
+      margin-top: -4px;
     }
 
     .indicator-dot {
       width: 5px;
       height: 5px;
-      border-radius: 50%;
-      background: rgba(0,0,0,0.15);
-      transition: background 0.3s ease;
+      border-radius: 2.5px;
+      background: rgba(0,0,0,0.06);
+      transition: all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
     }
 
     .indicator-dot.active {
-      background: rgba(0,0,0,0.40);
-      /* 保持相同形状和尺寸，仅颜色更深 */
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
+      width: 10px;
+      background: rgba(255,255,255,0.85);
+      border-radius: 2.5px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .indicator-dot.nearby {
+      background: rgba(0,0,0,0.06);
+    }
+
+    .indicator-dot.hidden-dot {
+      display: none;
     }
 
     /* ══════════════════════════════════════
-       Dock · 比例重构
-       图标为主体 · Dock仅大一圈
+       Dock · 透壁纸色块 · 背景模糊+色彩渗透
        ══════════════════════════════════════ */
     .dock-wrapper {
       display: flex;
       justify-content: center;
       align-items: flex-end;
       width: 100%;
-      padding: 0 28px 20px;
+      padding: 0 10px 18px;
       background: transparent;
       pointer-events: none;
     }
@@ -125,28 +131,30 @@
       pointer-events: auto;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 12px;
-      padding: 6px 18px;
-      border-radius: 28px;
-      background: rgba(255,255,255,0.80);
-      backdrop-filter: blur(18px) saturate(180%);
-      -webkit-backdrop-filter: blur(18px) saturate(180%);
+      justify-content: space-evenly;
+      gap: 20px;
+      padding: 12px 24px;
+      border-radius: 24px;
+      /* 透壁纸色块：背景模糊 + 色彩渗透 */
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(22px) saturate(200%);
+      -webkit-backdrop-filter: blur(22px) saturate(200%);
       box-shadow:
-        0 1px 6px rgba(0,0,0,0.03),
+        0 2px 12px rgba(0,0,0,0.06),
         0 0.5px 0 0 rgba(255,255,255,0.4) inset,
-        0 0 0 0.5px rgba(0,0,0,0.04);
-      max-width: 280px;
-      width: fit-content;
+        0 0 0 0.5px rgba(0,0,0,0.06);
+      width: calc(100% - 20px);
+      max-width: 420px;
       margin: 0 auto;
     }
 
-    /* Dock图标：主体突出，尺寸明显增大 */
     .dock-icon {
-      width: 50px;
-      height: 50px;
-      border-radius: 13px;
-      background: rgba(0,0,0,0.04);
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.4);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -157,9 +165,18 @@
     }
 
     .dock-icon-placeholder {
-      background: transparent;
-      color: #d0d0d0;
+      background: rgba(255,255,255,0.25);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #b0b0b8;
       font-size: 24px;
+    }
+
+    .dock-icon-inner {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.07);
     }
   </style>
 </head>
@@ -184,7 +201,7 @@
     const desktopItems = new Map();
 
     const pageState = {
-      count: 2,
+      count: 3,
       currentPage: 0,
     };
 
@@ -236,11 +253,10 @@
           const itemId = dockState.items[i] || null;
           if (itemId && desktopItems.has(itemId)) {
             const item = desktopItems.get(itemId);
-            icon.textContent = item.name?.charAt(0) || '●';
-            icon.style.background = 'rgba(0,0,0,0.05)';
+            icon.innerHTML = `<div class="dock-icon-inner" style="display:flex; align-items:center; justify-content:center; font-size:18px; background:rgba(0,0,0,0.06);">${item.name?.charAt(0) || '●'}</div>`;
           } else {
             icon.classList.add('dock-icon-placeholder');
-            icon.textContent = '○';
+            icon.innerHTML = `<div class="dock-icon-inner" style="background:rgba(0,0,0,0.03);"></div>`;
           }
           capsule.appendChild(icon);
         }
@@ -268,6 +284,7 @@
       viewport: null,
       indicator: null,
       stage: null,
+      previousPage: 0,
 
       dragState: {
         startX: 0,
@@ -282,6 +299,7 @@
         this.viewport = document.getElementById('pagesViewport');
         this.indicator = document.getElementById('pageIndicator');
         this.stage = document.getElementById('desktopStage');
+        this.previousPage = pageState.currentPage;
         this.setupDragListeners();
         this.renderPages();
       },
@@ -320,6 +338,7 @@
         const maxScroll = (pageState.count - 1) * this.getPageWidth();
         const clampedScroll = Math.max(0, Math.min(newScroll, maxScroll));
         this.viewport.style.transform = `translateX(${-clampedScroll}px)`;
+        this.updateIndicatorDuringScroll(clampedScroll);
       },
 
       onDragEnd(e) {
@@ -327,7 +346,6 @@
         this.dragState.isDragging = false;
 
         const currentScroll = this.getCurrentScroll();
-        const pageWidth = this.getPageWidth();
         const deltaFromStart = currentScroll - this.dragState.startScroll;
 
         let targetPage = pageState.currentPage;
@@ -349,14 +367,119 @@
       },
 
       animateToPage(pageIndex) {
+        this.previousPage = pageState.currentPage;
         const targetScroll = pageIndex * this.getPageWidth();
         this.viewport.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)';
         this.viewport.style.transform = `translateX(${-targetScroll}px)`;
 
         if (pageIndex !== pageState.currentPage) {
           pageState.currentPage = pageIndex;
-          this.renderIndicator();
+          this.renderIndicatorWithAnimation(this.previousPage, pageIndex);
         }
+      },
+
+      updateIndicatorDuringScroll(currentScroll) {
+        const pageWidth = this.getPageWidth();
+        if (pageWidth <= 0) return;
+        const progress = currentScroll / pageWidth;
+        const fromPage = Math.floor(progress);
+        const toPage = Math.min(fromPage + 1, pageState.count - 1);
+        if (fromPage !== toPage) {
+          this.renderSlidingIndicator(fromPage, toPage, progress - fromPage);
+        }
+      },
+
+      renderSlidingIndicator(fromPage, toPage, percent) {
+        if (!this.indicator) return;
+        this.indicator.innerHTML = '';
+        
+        const visiblePages = this.getVisiblePageRange(fromPage, toPage);
+        
+        visiblePages.forEach(pageIndex => {
+          const dot = document.createElement('span');
+          dot.className = 'indicator-dot';
+          
+          if (pageIndex === fromPage) {
+            const width = 10 - (5 * percent);
+            const opacity = 0.06 + (0.79 * (1 - percent));
+            dot.style.width = `${width}px`;
+            dot.style.opacity = opacity;
+            dot.style.background = `rgba(255,255,255,${0.06 + 0.79 * (1 - percent)})`;
+            dot.style.boxShadow = percent > 0.5 ? 'none' : '0 1px 3px rgba(0,0,0,0.08)';
+          } else if (pageIndex === toPage) {
+            const width = 5 + (5 * percent);
+            const opacity = 0.06 + (0.79 * percent);
+            dot.style.width = `${width}px`;
+            dot.style.opacity = opacity;
+            dot.style.background = `rgba(255,255,255,${0.06 + 0.79 * percent})`;
+            dot.style.boxShadow = percent > 0.5 ? '0 1px 3px rgba(0,0,0,0.08)' : 'none';
+          } else {
+            dot.style.width = '5px';
+            dot.style.background = 'rgba(0,0,0,0.06)';
+          }
+          
+          this.indicator.appendChild(dot);
+        });
+      },
+
+      getVisiblePageRange(fromPage, toPage) {
+        const current = fromPage;
+        const pages = new Set();
+        
+        // 始终包含当前页附近的页面，最多显示3个
+        if (pageState.count <= 3) {
+          for (let i = 0; i < pageState.count; i++) pages.add(i);
+        } else {
+          pages.add(current);
+          if (current > 0) pages.add(current - 1);
+          if (current < pageState.count - 1) pages.add(current + 1);
+          
+          // 确保正好3个，优先保留当前页和相邻页
+          if (pages.size > 3) {
+            if (current > 1) pages.delete(current - 2);
+            if (current < pageState.count - 2) pages.delete(current + 2);
+          }
+        }
+        
+        return Array.from(pages).sort((a, b) => a - b);
+      },
+
+      renderIndicatorWithAnimation(fromPage, toPage) {
+        if (!this.indicator) return;
+        
+        // 先显示过渡动画
+        this.indicator.innerHTML = '';
+        const visiblePages = this.getVisiblePageRange(Math.min(fromPage, toPage), Math.max(fromPage, toPage));
+        
+        visiblePages.forEach(pageIndex => {
+          const dot = document.createElement('span');
+          dot.className = 'indicator-dot';
+          
+          if (pageIndex === toPage) {
+            dot.classList.add('active');
+          } else if (pageIndex !== fromPage && pageIndex !== toPage) {
+            dot.style.width = '5px';
+            dot.style.background = 'rgba(0,0,0,0.06)';
+          }
+          
+          if (pageIndex === fromPage) {
+            dot.style.width = '5px';
+            dot.style.opacity = '0.06';
+            dot.style.background = 'rgba(0,0,0,0.06)';
+            setTimeout(() => {
+              dot.style.transition = 'all 0.3s ease';
+              dot.style.opacity = '1';
+            }, 50);
+          }
+          
+          dot.addEventListener('click', () => this.animateToPage(pageIndex));
+          this.indicator.appendChild(dot);
+        });
+        
+        // 动画结束后设置最终状态
+        setTimeout(() => {
+          this.renderIndicator();
+        }, 400);
       },
 
       getCurrentScroll() {
@@ -410,13 +533,16 @@
       renderIndicator() {
         if (!this.indicator) return;
         this.indicator.innerHTML = '';
-        for (let i = 0; i < pageState.count; i++) {
+        
+        const visiblePages = this.getVisiblePageRange(pageState.currentPage, pageState.currentPage);
+        
+        visiblePages.forEach(pageIndex => {
           const dot = document.createElement('span');
           dot.className = 'indicator-dot';
-          if (i === pageState.currentPage) dot.classList.add('active');
-          dot.addEventListener('click', () => this.animateToPage(i));
+          if (pageIndex === pageState.currentPage) dot.classList.add('active');
+          dot.addEventListener('click', () => this.animateToPage(pageIndex));
           this.indicator.appendChild(dot);
-        }
+        });
       },
 
       addPage() {
@@ -444,7 +570,7 @@
     function bootstrap() {
       DockSystem.render();
       PageManager.init();
-      console.log('玉界机·桌面框架 (比例优化·指示器重构)');
+      console.log('玉界机·桌面框架 (最多3指示器·透壁纸色块)');
     }
 
     bootstrap();
