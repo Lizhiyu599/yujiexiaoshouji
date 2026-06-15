@@ -3,6 +3,7 @@
   "short_name": "玉界机",
   "start_url": "/yujiexiaoshouji/",
   "display": "standalone",
+  "display_override": ["standalone", "fullscreen", "minimal-ui"],
   "background_color": "#e8e8ed",
   "theme_color": "#e8e8ed",
   "icons": [
