@@ -189,9 +189,57 @@
 
     <div class="page-indicator" id="pageIndicator"></div>
 
-    <div class="dock-wrapper">
-      <div class="dock-capsule" id="dockCapsule"></div>
+      <div class="dock-wrapper">
+    <div class="dock-capsule" id="dockCapsule"></div>
+  </div>
+
+  <!-- 小组件面板 -->
+  <button class="add-button hidden" id="addButton">+</button>
+  <div class="overlay" id="overlay" style="display:none;"></div>
+  <div class="panel hidden" id="panel">
+    <div class="drag-handle" id="dragHandle">
+      <div class="drag-handle-bar"></div>
     </div>
+    <div class="panel-content">
+      <div class="panel-title">小组件</div>
+      <div class="widget-item">
+        <div class="widget-header" data-widget="2x2">
+          <span class="widget-label">2×2</span>
+          <span class="toggle-icon">›</span>
+        </div>
+        <div class="widget-body">
+          <div class="widget-body-inner">2×2 小组件 · 占位内容</div>
+        </div>
+      </div>
+      <div class="widget-item">
+        <div class="widget-header" data-widget="2x4">
+          <span class="widget-label">2×4</span>
+          <span class="toggle-icon">›</span>
+        </div>
+        <div class="widget-body">
+          <div class="widget-body-inner">2×4 小组件 · 占位内容</div>
+        </div>
+      </div>
+      <div class="widget-item">
+        <div class="widget-header" data-widget="3x4">
+          <span class="widget-label">3×4</span>
+          <span class="toggle-icon">›</span>
+        </div>
+        <div class="widget-body">
+          <div class="widget-body-inner">3×4 小组件 · 占位内容</div>
+        </div>
+      </div>
+      <div class="widget-item">
+        <div class="widget-header" data-widget="4x4">
+          <span class="widget-label">4×4</span>
+          <span class="toggle-icon">›</span>
+        </div>
+        <div class="widget-body">
+          <div class="widget-body-inner">4×4 小组件 · 占位内容</div>
+        </div>
+      </div>
+    </div>
+  </div>
   </div>
 
   <script type="module">
