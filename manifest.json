@@ -1,18 +1,18 @@
 {
   "name": "玉界机",
   "short_name": "玉界机",
-  "start_url": "/",
+  "start_url": "/yujiexiaoshouji/",
   "display": "standalone",
   "background_color": "#e8e8ed",
   "theme_color": "#e8e8ed",
   "icons": [
     {
-      "src": "/assets/icons/icon-192.png",
+      "src": "/yujiexiaoshouji/assets/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/assets/icons/icon-512.png",
+      "src": "/yujiexiaoshouji/assets/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
