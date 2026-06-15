@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="mobile-web-app-capable" content="yes">
   <title>玉界机 · 桌面框架</title>
   <style>
@@ -18,12 +18,12 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      touch-action: pan-x;
       background: #FFFFFF;
       font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
+      touch-action: pan-x;
     }
 
     #app-root {
@@ -36,42 +36,32 @@
       background: #FFFFFF;
     }
 
+    /* ── 桌面舞台 ── */
     .desktop-stage {
       flex: 1;
       width: 100%;
       position: relative;
       overflow: hidden;
-      touch-action: pan-x;
-      padding-bottom: 8px;
+      touch-action: none;
     }
 
     .pages-viewport {
       display: flex;
       height: 100%;
       width: 100%;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-    .pages-viewport::-webkit-scrollbar {
-      display: none;
+      will-change: transform;
     }
 
     .desktop-page {
       flex: 0 0 100%;
       width: 100%;
       height: 100%;
-      scroll-snap-align: start;
       position: relative;
       display: grid;
       grid-template-columns: repeat(6, 1fr);
       grid-template-rows: repeat(4, 1fr);
       gap: 0;
-      padding: 14px 12px;
+      padding: 16px 14px;
     }
 
     .desktop-item {
@@ -80,16 +70,12 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      border-radius: 20px;
-      background: rgba(0, 0, 0, 0.04);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      border-radius: 18px;
+      background: rgba(0,0,0,0.03);
       color: #1d1d1f;
       font-size: 11px;
       font-weight: 500;
       overflow: hidden;
-      transition: transform 0.18s ease;
     }
 
     /* ── 页面指示器 ── */
@@ -97,47 +83,37 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 7px;
-      padding: 6px 0 10px;
-      height: 22px;
+      gap: 8px;
+      padding: 10px 0 14px;
+      height: 28px;
       background: transparent;
-      margin-bottom: 4px;
     }
 
     .indicator-dot {
       width: 6px;
       height: 6px;
       border-radius: 3px;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0,0,0,0.18);
       transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
     }
 
     .indicator-dot.active {
-      width: 16px;
-      background: rgba(0, 0, 0, 0.55);
+      width: 18px;
+      background: rgba(0,0,0,0.5);
       border-radius: 3px;
     }
 
-    /* ── 翻页微效 ── */
-    .desktop-page {
-      transition: opacity 0.28s ease, transform 0.28s ease;
-    }
-    .desktop-page.inactive-page {
-      opacity: 0.75;
-      transform: scale(0.985);
-    }
-
     /* ══════════════════════════════════════
-       Dock · 悬浮胶囊 · 高透磨砂玻璃
+       Dock · 重新设计 · 轻盈悬浮胶囊
        ══════════════════════════════════════ */
     .dock-wrapper {
       display: flex;
       justify-content: center;
       align-items: flex-end;
       width: 100%;
-      padding: 0 20px 20px; /* 底部安全间距 */
+      padding: 0 24px 18px;
       background: transparent;
-      pointer-events: none; /* 让点击穿透到Dock内部 */
+      pointer-events: none;
     }
 
     .dock-capsule {
@@ -145,52 +121,41 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      padding: 10px 22px;
-      border-radius: 40px; /* 完全圆润胶囊 */
-      background: rgba(255, 255, 255, 0.72);
-      /* 核心：高透磨砂玻璃 */
-      backdrop-filter: blur(22px) saturate(180%);
-      -webkit-backdrop-filter: blur(22px) saturate(180%);
-      /* 极细腻的光泽与边缘 */
+      gap: 14px;
+      padding: 8px 24px;
+      border-radius: 32px;
+      background: rgba(255,255,255,0.78);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
       box-shadow:
-        0 2px 12px rgba(0, 0, 0, 0.04),
-        0 0.5px 0 0 rgba(255, 255, 255, 0.6) inset,
-        0 0 0 0.5px rgba(0, 0, 0, 0.06);
-      transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
-      max-width: 340px;
+        0 1px 8px rgba(0,0,0,0.04),
+        0 0.5px 0 0 rgba(255,255,255,0.5) inset,
+        0 0 0 0.5px rgba(0,0,0,0.05);
+      max-width: 300px;
       width: fit-content;
       margin: 0 auto;
+      transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
     }
 
-    .dock-slot {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: rgba(0, 0, 0, 0.03);
+    /* Dock 图标：直接放置，无额外容器 */
+    .dock-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(0,0,0,0.05);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.22s cubic-bezier(0.25, 0.1, 0.25, 1);
+      font-size: 22px;
       color: #1d1d1f;
-      font-size: 24px;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      box-shadow: 0 0.5px 1px rgba(0,0,0,0.04);
-      position: relative;
+      transition: transform 0.18s ease;
+      flex-shrink: 0;
     }
 
-    /* 占位图标圆角方形风格 */
-    .dock-slot-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: rgba(0, 0, 0, 0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      color: #1d1d1f;
+    .dock-icon-placeholder {
+      background: transparent;
+      color: #c0c0c0;
+      font-size: 20px;
     }
   </style>
 </head>
@@ -204,7 +169,7 @@
     <!-- 页面指示器 -->
     <div class="page-indicator" id="pageIndicator"></div>
 
-    <!-- Dock 悬浮容器 -->
+    <!-- Dock -->
     <div class="dock-wrapper">
       <div class="dock-capsule" id="dockCapsule"></div>
     </div>
@@ -212,13 +177,13 @@
 
   <script type="module">
     // ══════════════════════════════════════
-    // 玉界机 · 桌面底层框架 (纯白通透版)
+    // 玉界机 · 桌面底层框架 (翻页重构)
     // ══════════════════════════════════════
 
     const desktopItems = new Map();
 
     const pageState = {
-      count: 3,
+      count: 2,            // 默认2页：主桌面 + 空白测试页
       currentPage: 0,
     };
 
@@ -261,23 +226,25 @@
       }
     };
 
-    // ── Dock 系统 (悬浮胶囊) ──
+    // ── Dock 系统 (轻盈胶囊) ──
     const DockSystem = {
       render() {
         const capsule = document.getElementById('dockCapsule');
         if (!capsule) return;
         capsule.innerHTML = '';
         for (let i = 0; i < this.maxSlots; i++) {
-          const slot = document.createElement('div');
-          slot.className = 'dock-slot';
+          const icon = document.createElement('div');
+          icon.className = 'dock-icon';
           const itemId = dockState.items[i] || null;
           if (itemId && desktopItems.has(itemId)) {
             const item = desktopItems.get(itemId);
-            slot.innerHTML = `<div class="dock-slot-icon">${item.name?.charAt(0) || '●'}</div>`;
+            icon.textContent = item.name?.charAt(0) || '●';
+            icon.style.background = 'rgba(0,0,0,0.06)';
           } else {
-            slot.innerHTML = `<div class="dock-slot-icon" style="background:transparent; color:#b0b0b0;">○</div>`;
+            icon.classList.add('dock-icon-placeholder');
+            icon.textContent = '○';
           }
-          capsule.appendChild(slot);
+          capsule.appendChild(icon);
         }
       },
       get maxSlots() { return dockState.maxSlots; },
@@ -299,27 +266,155 @@
       }
     };
 
-    // ── 页面管理 ──
+    // ══════════════════════════════════════
+    // 页面管理 · 手指跟随拖拽翻页系统
+    // ══════════════════════════════════════
     const PageManager = {
       viewport: null,
       indicator: null,
+      stage: null,
+
+      // 拖拽状态
+      dragState: {
+        startX: 0,
+        startScroll: 0,
+        isDragging: false,
+        threshold: 60,       // 翻页阈值(px)，降低灵敏度
+        maxVelocity: 0.8,    // 防止连续快速翻页
+        lastPageTime: 0,
+        cooldown: 350,       // 翻页冷却时间(ms)
+      },
 
       init() {
         this.viewport = document.getElementById('pagesViewport');
         this.indicator = document.getElementById('pageIndicator');
-        this.setupScrollListener();
+        this.stage = document.getElementById('desktopStage');
+        this.setupDragListeners();
         this.renderPages();
       },
 
+      setupDragListeners() {
+        if (!this.stage || !this.viewport) return;
+
+        // 触摸事件
+        this.stage.addEventListener('touchstart', (e) => this.onDragStart(e), { passive: false });
+        this.stage.addEventListener('touchmove', (e) => this.onDragMove(e), { passive: false });
+        this.stage.addEventListener('touchend', (e) => this.onDragEnd(e));
+
+        // 鼠标事件 (桌面调试)
+        this.stage.addEventListener('mousedown', (e) => this.onDragStart(e));
+        window.addEventListener('mousemove', (e) => {
+          if (this.dragState.isDragging) this.onDragMove(e);
+        });
+        window.addEventListener('mouseup', (e) => {
+          if (this.dragState.isDragging) this.onDragEnd(e);
+        });
+      },
+
+      onDragStart(e) {
+        // 阻止默认行为防止页面滚动
+        if (e.cancelable) e.preventDefault();
+        
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        this.dragState.startX = clientX;
+        this.dragState.startScroll = this.getCurrentScroll();
+        this.dragState.isDragging = true;
+        
+        // 取消现有过渡动画，实现即时跟随
+        this.viewport.style.transition = 'none';
+      },
+
+      onDragMove(e) {
+        if (!this.dragState.isDragging) return;
+        if (e.cancelable) e.preventDefault();
+
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const deltaX = this.dragState.startX - clientX;
+        const newScroll = this.dragState.startScroll + deltaX;
+        
+        // 边界弹性：限制在有效范围内
+        const maxScroll = (pageState.count - 1) * this.getPageWidth();
+        const clampedScroll = Math.max(0, Math.min(newScroll, maxScroll));
+        
+        this.viewport.style.transform = `translateX(${-clampedScroll}px)`;
+      },
+
+      onDragEnd(e) {
+        if (!this.dragState.isDragging) return;
+        this.dragState.isDragging = false;
+
+        const currentScroll = this.getCurrentScrollFromTransform();
+        const pageWidth = this.getPageWidth();
+        
+        // 计算最近的页面
+        const nearestPage = Math.round(currentScroll / pageWidth);
+        const distanceFromNearest = currentScroll - nearestPage * pageWidth;
+        
+        let targetPage = this.dragState.startScroll / pageWidth;
+        const deltaFromStart = currentScroll - this.dragState.startScroll;
+        
+        // 判断是否达到翻页阈值
+        if (Math.abs(deltaFromStart) > this.dragState.threshold) {
+          targetPage = deltaFromStart > 0 
+            ? Math.min(pageState.count - 1, Math.ceil(currentScroll / pageWidth))
+            : Math.max(0, Math.floor(currentScroll / pageWidth));
+        } else {
+          // 未达阈值，回弹到最近页面
+          targetPage = nearestPage;
+        }
+
+        // 冷却检查：防止连续快速翻页
+        const now = Date.now();
+        if (now - this.dragState.lastPageTime < this.dragState.cooldown) {
+          targetPage = pageState.currentPage;
+        }
+
+        // 确保目标页在有效范围内
+        targetPage = Math.max(0, Math.min(pageState.count - 1, Math.round(targetPage)));
+        
+        // 执行翻页动画
+        this.animateToPage(targetPage);
+        this.dragState.lastPageTime = now;
+      },
+
+      animateToPage(pageIndex) {
+        const targetScroll = pageIndex * this.getPageWidth();
+        this.viewport.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)';
+        this.viewport.style.transform = `translateX(${-targetScroll}px)`;
+        
+        if (pageIndex !== pageState.currentPage) {
+          pageState.currentPage = pageIndex;
+          this.renderIndicator();
+        }
+      },
+
+      getCurrentScroll() {
+        if (!this.viewport) return 0;
+        const transform = this.viewport.style.transform;
+        const match = transform.match(/translateX\((-?\d+(\.\d+)?)px\)/);
+        return match ? Math.abs(parseFloat(match[1])) : 0;
+      },
+
+      getCurrentScrollFromTransform() {
+        return this.getCurrentScroll();
+      },
+
+      getPageWidth() {
+        return this.stage ? this.stage.clientWidth : window.innerWidth;
+      },
+
+      // ── 页面渲染 ──
       renderPages() {
         if (!this.viewport) return;
-        const scrollLeft = this.viewport.scrollLeft;
-        const pw = this.viewport.clientWidth;
+        
+        const currentScroll = this.getCurrentScroll();
         this.viewport.innerHTML = '';
+        
         for (let i = 0; i < pageState.count; i++) {
           const page = document.createElement('div');
           page.className = 'desktop-page';
           page.dataset.pageIndex = i;
+          
           const items = ElementManager.getItemsByPage(i);
           items.forEach(item => {
             const el = document.createElement('div');
@@ -327,68 +422,80 @@
             const gs = ElementManager.getGridStyle(item);
             el.style.gridColumn = gs.gridColumn;
             el.style.gridRow = gs.gridRow;
-            el.innerHTML = `<div style="font-size:28px; margin-bottom:3px; opacity:0.7;">${item.type==='widget'?'▣':'◎'}</div><span style="font-size:11px;">${item.name||''}</span>`;
+            el.innerHTML = `
+              <div style="font-size:26px; margin-bottom:3px; opacity:0.6;">${item.type==='widget'?'▣':'◎'}</div>
+              <span style="font-size:11px;">${item.name||''}</span>
+            `;
             page.appendChild(el);
           });
+          
           this.viewport.appendChild(page);
         }
+        
         this.renderIndicator();
-        this.applyPageTransitions();
+        
+        // 恢复位置
         requestAnimationFrame(() => {
-          if (this.viewport && pw>0) {
-            this.viewport.scrollLeft = Math.min(scrollLeft, (pageState.count-1)*pw);
-            this.updateActivePage();
-          }
+          const maxScroll = (pageState.count - 1) * this.getPageWidth();
+          const clamped = Math.min(currentScroll, maxScroll);
+          this.viewport.style.transition = 'none';
+          this.viewport.style.transform = `translateX(${-clamped}px)`;
         });
       },
 
       renderIndicator() {
         if (!this.indicator) return;
         this.indicator.innerHTML = '';
-        for (let i=0;i<pageState.count;i++) {
-          const d = document.createElement('span');
-          d.className = 'indicator-dot';
-          if (i===pageState.currentPage) d.classList.add('active');
-          d.addEventListener('click', ()=>this.scrollToPage(i));
-          this.indicator.appendChild(d);
+        for (let i = 0; i < pageState.count; i++) {
+          const dot = document.createElement('span');
+          dot.className = 'indicator-dot';
+          if (i === pageState.currentPage) dot.classList.add('active');
+          dot.addEventListener('click', () => this.animateToPage(i));
+          this.indicator.appendChild(dot);
         }
       },
 
-      applyPageTransitions() {
-        document.querySelectorAll('.desktop-page').forEach((p,idx)=>{
-          p.classList.toggle('inactive-page', idx!==pageState.currentPage);
+      addPage() {
+        pageState.count += 1;
+        this.renderPages();
+      },
+
+      removePage(index) {
+        if (pageState.count <= 1) return;
+        const items = ElementManager.getItemsByPage(index);
+        if (items.length > 0) return;
+        
+        desktopItems.forEach((item, id) => {
+          if (item.pageIndex > index) item.pageIndex -= 1;
         });
-      },
-
-      updateActivePage() {
-        if (!this.viewport) return;
-        const pw = this.viewport.clientWidth;
-        if (pw<=0) return;
-        const cur = Math.round(this.viewport.scrollLeft/pw);
-        if (cur!==pageState.currentPage) {
-          pageState.currentPage = cur;
-          this.renderIndicator();
-          this.applyPageTransitions();
+        
+        pageState.count -= 1;
+        if (pageState.currentPage >= pageState.count) {
+          pageState.currentPage = pageState.count - 1;
         }
-      },
-
-      setupScrollListener() {
-        this.viewport?.addEventListener('scroll', ()=>this.updateActivePage(), {passive:true});
-      },
-
-      scrollToPage(i) {
-        if (!this.viewport||i<0||i>=pageState.count) return;
-        this.viewport.scrollTo({left:i*this.viewport.clientWidth, behavior:'smooth'});
+        this.renderPages();
       }
     };
 
-    // 启动
+    // ── 启动 ──
     function bootstrap() {
       DockSystem.render();
       PageManager.init();
-      console.log('玉界机·桌面框架 (纯白悬浮Dock)');
+      console.log('玉界机·桌面框架 (翻页重构·2页·轻盈Dock)');
     }
+
     bootstrap();
+
+    // 调试接口
+    window.__JadeWorld = {
+      ElementManager,
+      GridSystem,
+      DockSystem,
+      PageManager,
+      desktopItems,
+      pageState,
+      dockState,
+    };
   </script>
 </body>
 </html>
