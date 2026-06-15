@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="mobile-web-app-capable" content="yes">
-  <title>玉界机 · 桌面框架</title>
+  <title>玉界机</title>
   <style>
     * {
       margin: 0;
@@ -584,6 +584,12 @@
       pageState,
       dockState,
     };
-  </script>
+  
+  <!-- 注册 Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+  }
+</script>
 </body>
 </html>
