@@ -529,7 +529,6 @@
       },
 
       renderPages() {
-              renderPages() {
         if (!this.viewport) return;
         const currentScroll = this.getCurrentScroll();
         this.viewport.innerHTML = '';
@@ -729,10 +728,30 @@
       });
     }    
 
+        function updateDesktopTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const timeEl = document.getElementById('deskTimeNum');
+      if (timeEl) timeEl.textContent = `${hours}:${minutes}`;
+
+      const dateEl = document.getElementById('deskDateText');
+      if (dateEl) {
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const date = String(now.getDate()).padStart(2, '0');
+        const weeks = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        dateEl.textContent = `${month}月${date}日 ${weeks[now.getDay()]}`;
+      }
+    }
+
     function bootstrap() {
       DockSystem.render();
       PageManager.init();
-      console.log('玉界机·桌面框架 (最多3指示器·透壁纸色块)');
+      
+      updateDesktopTime();
+      setInterval(updateDesktopTime, 1000);
+      
+      console.log('玉界机·桌面框架已加载，时钟已启动');
     }
     
     bootstrap();
@@ -747,7 +766,5 @@
       dockState,
     };
   </script>
-
-  <script src="/yujiexiaoshouji/widget-panel.js"></script>
 </body>
 </html>
