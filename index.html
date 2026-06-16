@@ -237,7 +237,8 @@
 
   <script type="module">
     const desktopItems = new Map();
-
+    // 桌面小组件配置
+    desktopItems.set('clock-1', { id: 'clock-1', type: 'widget', name: 'clock-2x4', pageIndex: 0, gridX: 0, gridY: 0, width: 4, height: 2 });
     const pageState = {
       count: 3,
       currentPage: 0,
@@ -528,6 +529,7 @@
       },
 
       renderPages() {
+              renderPages() {
         if (!this.viewport) return;
         const currentScroll = this.getCurrentScroll();
         this.viewport.innerHTML = '';
@@ -541,13 +543,67 @@
           items.forEach(item => {
             const el = document.createElement('div');
             el.className = 'desktop-item';
+            
+            // ── 鱼鱼定制：如果有名字叫 clock-2x4 的组件，就加载毛玻璃皮肤 ──
+            if (item.name === 'clock-2x4') {
+              el.style.background = 'transparent';
+              el.innerHTML = `
+                <div class="glass-widget-2x4">
+                  <div class="widget-time-box">
+                    <div class="widget-time-digital" id="deskTimeNum">00:00</div>
+                    <div class="widget-date-text" id="deskDateText">--月--日</div>
+                  </div>
+                  <div class="widget-avatar-container">
+                    <img src="" class="widget-avatar-img" id="deskAvatarImg">
+                    <input type="file" id="deskAvatarInput" class="avatar-file-input" accept="image/*">
+                  </div>
+                </div>
+              `;
+              // 绑定头像的读取和保存逻辑
+              setTimeout(() => {
+                const img = el.querySelector('#deskAvatarImg');
+                const input = el.querySelector('#deskAvatarInput');
+                const savedAvatar = localStorage.getItem('yuyu-avatar');
+                img.src = savedAvatar || 'https://via.placeholder.com/100';
+                img.onclick = () => input.click();
+                input.onchange = (e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                      img.src = ev.target.result;
+                      localStorage.setItem('yuyu-avatar', ev.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                };
+              }, 0);
+            } else {
+              // 普通图标渲染逻辑
+              el.innerHTML = `
+                <div style="font-size:26px; margin-bottom:3px; opacity:0.6;">${item.type==='widget'?'▣':'◎'}</div>
+                <span style="font-size:11px;">${item.name||''}</span>
+              `;
+            }
+
             const gs = ElementManager.getGridStyle(item);
             el.style.gridColumn = gs.gridColumn;
             el.style.gridRow = gs.gridRow;
-            el.innerHTML = `
-              <div style="font-size:26px; margin-bottom:3px; opacity:0.6;">${item.type==='widget'?'▣':'◎'}</div>
-              <span style="font-size:11px;">${item.name||''}</span>
-            `;
+            page.appendChild(el);
+          });
+
+          this.viewport.appendChild(page);
+        }
+
+        this.renderIndicator();
+
+        requestAnimationFrame(() => {
+          const maxScroll = (pageState.count - 1) * this.getPageWidth();
+          const clamped = Math.min(currentScroll, maxScroll);
+          this.viewport.style.transition = 'none';
+          this.viewport.style.transform = `translateX(${-clamped}px)`;
+        });
+      },
             page.appendChild(el);
           });
 
