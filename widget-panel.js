@@ -77,9 +77,3 @@ setTimeout(function() {
     });
   });
 }, 200);
-// 点击桌面空白处隐藏加号
-document.getElementById('desktopStage').addEventListener('click', function(e) {
-  if (e.target === document.getElementById('desktopStage') || e.target.classList.contains('desktop-page') || e.target.classList.contains('pages-viewport')) {
-    addButton.classList.add('hidden');
-  }
-});
