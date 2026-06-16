@@ -672,34 +672,6 @@
     addBtn.classList.add('hidden');
   });
 })();
-function handlePressEnd() {
-  if (longPressTimer) {
-    clearTimeout(longPressTimer);
-    longPressTimer = null;
-  }
-}
-
-desktopStageEl.addEventListener('touchstart', handlePressStart, { passive: true });
-desktopStageEl.addEventListener('touchmove', handlePressMove, { passive: true });
-desktopStageEl.addEventListener('touchend', handlePressEnd);
-desktopStageEl.addEventListener('touchcancel', handlePressEnd);
-desktopStageEl.addEventListener('mousedown', handlePressStart);
-desktopStageEl.addEventListener('mousemove', handlePressMove);
-window.addEventListener('mouseup', handlePressEnd);
-
-document.getElementById('addButton').addEventListener('click', function(e) {
-  e.stopPropagation();
-  if (typeof openWidgetPanel === 'function') {
-    openWidgetPanel();
-  }
-});
-
-desktopStageEl.addEventListener('click', function(e) {
-  const addButton = document.getElementById('addButton');
-  if (!addButton || addButton.classList.contains('hidden')) return;
-  if (e.target.closest('.dock-capsule') || e.target.closest('#addButton') || e.target.closest('.panel') || e.target.closest('.overlay')) return;
-  addButton.classList.add('hidden');
-});
 
 function bootstrap() {
   DockSystem.render();
