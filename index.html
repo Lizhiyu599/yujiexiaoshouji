@@ -613,17 +613,36 @@
         if (pageState.currentPage >= pageState.count) {
           pageState.currentPage = pageState.count - 1;
         }
-        this.renderPages();
-      }
-    };
+  this.renderPages();
+  }
+};   //
 
-    function bootstrap() {
-      DockSystem.render();
-      PageManager.init();
-      console.log('玉界机·桌面框架 (最多3指示器·透壁纸色块)');
-    }
 
-    bootstrap();
+// ── 长按桌面显示加号 ──
+const desktopStageEl = document.getElementById('desktopStage');
+let longPressTimer;
+
+desktopStageEl.addEventListener('touchstart', function(e) {
+  longPressTimer = setTimeout(function() {
+    document.getElementById('addButton').classList.remove('hidden');
+  }, 500);
+}, { passive: true });
+
+desktopStageEl.addEventListener('touchend', function() {
+  clearTimeout(longPressTimer);
+});
+
+desktopStageEl.addEventListener('touchmove', function() {
+  clearTimeout(longPressTimer);
+});
+
+function bootstrap() {
+  DockSystem.render();
+  PageManager.init();
+  console.log('玉界机·桌面框架 (最多3指示器·透壁纸色块)');
+}
+    
+   bootstrap();
 
         window.__JadeWorld = {
       ElementManager,
@@ -639,7 +658,7 @@
   </script>
 
   <!-- 小组件面板 JS -->
-<script type="module" src="/yujiexiaoshouji/widget-panel.js"></script>
+<script src="/yujiexiaoshouji/widget-panel.js"></script>
 
   <!-- 注册 Service Worker -->
   <script>
