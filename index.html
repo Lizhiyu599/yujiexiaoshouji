@@ -617,32 +617,61 @@
   }
 };
 
-// ── 长按唤出 + 点击隐藏加号 ──
-let longPressTimer = null;
-let pressStartX = 0;
-let pressStartY = 0;
-const desktopStageEl = document.getElementById('desktopStage');
+// ── 加号：长按出现，点击加号打开面板，点击桌面或关闭面板隐藏 ──
+(function() {
+  const stage = document.getElementById('desktopStage');
+  const addBtn = document.getElementById('addButton');
+  if (!stage || !addBtn) return;
 
-function handlePressStart(e) {
-  pressStartX = e.touches ? e.touches[0].clientX : e.clientX;
-  pressStartY = e.touches ? e.touches[0].clientY : e.clientY;
-  longPressTimer = setTimeout(() => {
-    document.getElementById('addButton').classList.remove('hidden');
-  }, 500);
-}
+  let timer = null, sx = 0, sy = 0;
 
-function handlePressMove(e) {
-  if (!longPressTimer) return;
-  const currentX = e.touches ? e.touches[0].clientX : e.clientX;
-  const currentY = e.touches ? e.touches[0].clientY : e.clientY;
-  const deltaX = Math.abs(currentX - pressStartX);
-  const deltaY = Math.abs(currentY - pressStartY);
-  if (deltaX > 10 || deltaY > 10) {
-    clearTimeout(longPressTimer);
-    longPressTimer = null;
-  }
-}
+  // 长按出现
+  stage.addEventListener('touchstart', function(e) {
+    sx = e.touches[0].clientX;
+    sy = e.touches[0].clientY;
+    timer = setTimeout(function() {
+      addBtn.classList.remove('hidden');
+    }, 500);
+  }, { passive: true });
 
+  stage.addEventListener('touchmove', function(e) {
+    if (!timer) return;
+    if (Math.abs(e.touches[0].clientX - sx) > 10 || Math.abs(e.touches[0].clientY - sy) > 10) {
+      clearTimeout(timer);
+      timer = null;
+    }
+  }, { passive: true });
+
+  stage.addEventListener('touchend', function() {
+    if (timer) { clearTimeout(timer); timer = null; }
+  });
+
+  stage.addEventListener('touchcancel', function() {
+    if (timer) { clearTimeout(timer); timer = null; }
+  });
+
+  // 点击加号 → 打开面板，加号隐藏
+  addBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    addBtn.classList.add('hidden');
+    const panel = document.getElementById('panel');
+    const overlay = document.getElementById('overlay');
+    if (panel && overlay) {
+      panel.classList.remove('hidden');
+      overlay.style.display = 'block';
+    }
+  });
+
+  // 点击桌面任意位置 → 加号隐藏（排除 Dock 和面板区域）
+  document.addEventListener('click', function(e) {
+    if (addBtn.classList.contains('hidden')) return;
+    if (e.target.closest('#addButton')) return;
+    if (e.target.closest('.panel')) return;
+    if (e.target.closest('.overlay')) return;
+    if (e.target.closest('.dock-capsule')) return;
+    addBtn.classList.add('hidden');
+  });
+})();
 function handlePressEnd() {
   if (longPressTimer) {
     clearTimeout(longPressTimer);
