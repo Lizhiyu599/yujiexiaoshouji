@@ -603,21 +603,6 @@
           this.viewport.style.transform = `translateX(${-clamped}px)`;
         });
       },
-            page.appendChild(el);
-          });
-
-          this.viewport.appendChild(page);
-        }
-
-        this.renderIndicator();
-
-        requestAnimationFrame(() => {
-          const maxScroll = (pageState.count - 1) * this.getPageWidth();
-          const clamped = Math.min(currentScroll, maxScroll);
-          this.viewport.style.transition = 'none';
-          this.viewport.style.transform = `translateX(${-clamped}px)`;
-        });
-      },
 
       renderIndicator() {
         if (!this.indicator) return;
@@ -728,7 +713,7 @@
       });
     }    
 
-        function updateDesktopTime() {
+    function updateDesktopTime() {
       const now = new Date();
       const hours = String(now.getHours()).padStart(2, '0');
       const minutes = String(now.getMinutes()).padStart(2, '0');
