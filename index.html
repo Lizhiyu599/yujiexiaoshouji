@@ -78,6 +78,9 @@
       overflow: hidden;
     }
 
+    /* ══════════════════════════════════════
+       分页指示器 · 最多显示3个 · 透壁纸色块
+       ══════════════════════════════════════ */
     .page-indicator {
       display: flex;
       justify-content: center;
@@ -112,6 +115,9 @@
       display: none;
     }
 
+    /* ══════════════════════════════════════
+       Dock · 透壁纸色块 · 背景模糊+色彩渗透
+       ══════════════════════════════════════ */
     .dock-wrapper {
       display: flex;
       justify-content: center;
@@ -130,6 +136,7 @@
       gap: 20px;
       padding: 12px 24px;
       border-radius: 24px;
+      /* 透壁纸色块：背景模糊 + 色彩渗透 */
       background: rgba(255,255,255,0.55);
       backdrop-filter: blur(22px) saturate(200%);
       -webkit-backdrop-filter: blur(22px) saturate(200%);
@@ -173,7 +180,7 @@
       background: rgba(0,0,0,0.07);
     }
   </style>
-  <link rel="stylesheet" href="/yujiexiaoshouji/widget-panel.css">
+ <link rel="stylesheet" href="/yujiexiaoshouji/widget-panel.css">
 </head>
 <body>
   <div id="app-root">
@@ -183,62 +190,66 @@
 
     <div class="page-indicator" id="pageIndicator"></div>
 
-    <div class="dock-wrapper">
-      <div class="dock-capsule" id="dockCapsule"></div>
-    </div>
+      <div class="dock-wrapper">
+    <div class="dock-capsule" id="dockCapsule"></div>
+  </div>
 
-    <button class="add-button hidden" id="addButton">+</button>
-    <div class="overlay" id="overlay" style="display:none;"></div>
-    <div class="panel hidden" id="panel">
-      <div class="drag-handle" id="dragHandle">
-        <div class="drag-handle-bar"></div>
+  <!-- 小组件面板 -->
+  <button class="add-button hidden" id="addButton">+</button>
+  <div class="overlay" id="overlay" style="display:none;"></div>
+  <div class="panel hidden" id="panel">
+    <div class="drag-handle" id="dragHandle">
+      <div class="drag-handle-bar"></div>
+    </div>
+    <div class="panel-content">
+      <div class="panel-title">小组件</div>
+      <div class="widget-item">
+        <div class="widget-header" data-widget="2x2">
+          <span class="widget-label">2×2</span>
+          <span class="toggle-icon">›</span>
+        </div>
+        <div class="widget-body">
+          <div class="widget-body-inner">2×2 小组件 · 占位内容</div>
+        </div>
       </div>
-      <div class="panel-content">
-        <div class="panel-title">小组件</div>
-        <div class="widget-item">
-          <div class="widget-header" data-widget="2x2">
-            <span class="widget-label">2×2</span>
-            <span class="toggle-icon">›</span>
-          </div>
-          <div class="widget-body">
-            <div class="widget-body-inner">2×2 小组件 · 占位内容</div>
-          </div>
+      <div class="widget-item">
+        <div class="widget-header" data-widget="2x4">
+          <span class="widget-label">2×4</span>
+          <span class="toggle-icon">›</span>
         </div>
-        <div class="widget-item">
-          <div class="widget-header" data-widget="2x4">
-            <span class="widget-label">2×4</span>
-            <span class="toggle-icon">›</span>
-          </div>
-          <div class="widget-body">
-            <div class="widget-body-inner">2×4 小组件 · 占位内容</div>
-          </div>
+        <div class="widget-body">
+          <div class="widget-body-inner">2×4 小组件 · 占位内容</div>
         </div>
-        <div class="widget-item">
-          <div class="widget-header" data-widget="3x4">
-            <span class="widget-label">3×4</span>
-            <span class="toggle-icon">›</span>
-          </div>
-          <div class="widget-body">
-            <div class="widget-body-inner">3×4 小组件 · 占位内容</div>
-          </div>
+      </div>
+      <div class="widget-item">
+        <div class="widget-header" data-widget="3x4">
+          <span class="widget-label">3×4</span>
+          <span class="toggle-icon">›</span>
         </div>
-        <div class="widget-item">
-          <div class="widget-header" data-widget="4x4">
-            <span class="widget-label">4×4</span>
-            <span class="toggle-icon">›</span>
-          </div>
-          <div class="widget-body">
-            <div class="widget-body-inner">4×4 小组件 · 占位内容</div>
-          </div>
+        <div class="widget-body">
+          <div class="widget-body-inner">3×4 小组件 · 占位内容</div>
+        </div>
+      </div>
+      <div class="widget-item">
+        <div class="widget-header" data-widget="4x4">
+          <span class="widget-label">4×4</span>
+          <span class="toggle-icon">›</span>
+        </div>
+        <div class="widget-body">
+          <div class="widget-body-inner">4×4 小组件 · 占位内容</div>
         </div>
       </div>
     </div>
   </div>
+  </div>
 
   <script type="module">
+    // ══════════════════════════════════════
+    // 玉界机 · 桌面底层框架
+    // ══════════════════════════════════════
+
     const desktopItems = new Map();
-    // 桌面小组件配置
-    desktopItems.set('clock-1', { id: 'clock-1', type: 'widget', name: 'clock-2x4', pageIndex: 0, gridX: 0, gridY: 0, width: 4, height: 2 });
+
     const pageState = {
       count: 3,
       currentPage: 0,
@@ -465,6 +476,7 @@
         const current = fromPage;
         const pages = new Set();
         
+        // 始终包含当前页附近的页面，最多显示3个
         if (pageState.count <= 3) {
           for (let i = 0; i < pageState.count; i++) pages.add(i);
         } else {
@@ -472,6 +484,7 @@
           if (current > 0) pages.add(current - 1);
           if (current < pageState.count - 1) pages.add(current + 1);
           
+          // 确保正好3个，优先保留当前页和相邻页
           if (pages.size > 3) {
             if (current > 1) pages.delete(current - 2);
             if (current < pageState.count - 2) pages.delete(current + 2);
@@ -484,6 +497,7 @@
       renderIndicatorWithAnimation(fromPage, toPage) {
         if (!this.indicator) return;
         
+        // 先显示过渡动画
         this.indicator.innerHTML = '';
         const visiblePages = this.getVisiblePageRange(Math.min(fromPage, toPage), Math.max(fromPage, toPage));
         
@@ -512,6 +526,7 @@
           this.indicator.appendChild(dot);
         });
         
+        // 动画结束后设置最终状态
         setTimeout(() => {
           this.renderIndicator();
         }, 400);
@@ -542,52 +557,13 @@
           items.forEach(item => {
             const el = document.createElement('div');
             el.className = 'desktop-item';
-            
-            // ── 鱼鱼定制：如果有名字叫 clock-2x4 的组件，就加载毛玻璃皮肤 ──
-            if (item.name === 'clock-2x4') {
-              el.style.background = 'transparent';
-              el.innerHTML = `
-                <div class="glass-widget-2x4">
-                  <div class="widget-time-box">
-                    <div class="widget-time-digital" id="deskTimeNum">00:00</div>
-                    <div class="widget-date-text" id="deskDateText">--月--日</div>
-                  </div>
-                  <div class="widget-avatar-container">
-                    <img src="" class="widget-avatar-img" id="deskAvatarImg">
-                    <input type="file" id="deskAvatarInput" class="avatar-file-input" accept="image/*">
-                  </div>
-                </div>
-              `;
-              // 绑定头像的读取和保存逻辑
-              setTimeout(() => {
-                const img = el.querySelector('#deskAvatarImg');
-                const input = el.querySelector('#deskAvatarInput');
-                const savedAvatar = localStorage.getItem('yuyu-avatar');
-                img.src = savedAvatar || 'https://via.placeholder.com/100';
-                img.onclick = () => input.click();
-                input.onchange = (e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                      img.src = ev.target.result;
-                      localStorage.setItem('yuyu-avatar', ev.target.result);
-                    };
-                    reader.readAsDataURL(file);
-                  }
-                };
-              }, 0);
-            } else {
-              // 普通图标渲染逻辑
-              el.innerHTML = `
-                <div style="font-size:26px; margin-bottom:3px; opacity:0.6;">${item.type==='widget'?'▣':'◎'}</div>
-                <span style="font-size:11px;">${item.name||''}</span>
-              `;
-            }
-
             const gs = ElementManager.getGridStyle(item);
             el.style.gridColumn = gs.gridColumn;
             el.style.gridRow = gs.gridRow;
+            el.innerHTML = `
+              <div style="font-size:26px; margin-bottom:3px; opacity:0.6;">${item.type==='widget'?'▣':'◎'}</div>
+              <span style="font-size:11px;">${item.name||''}</span>
+            `;
             page.appendChild(el);
           });
 
@@ -633,115 +609,41 @@
           if (item.pageIndex > index) item.pageIndex -= 1;
         });
 
-        pageState.count -= 1;
-        if (pageState.currentPage >= pageState.count) {
-          pageState.currentPage = pageState.count - 1;
-        }
-        this.renderPages();
-      }
-    };  
-
-    let longPressTimer = null;
-    let pressStartX = 0;
-    let pressStartY = 0;
-    const desktopStageEl = document.getElementById('desktopStage');
-
-    function handlePressStart(e) {
-      pressStartX = e.touches ? e.touches[0].clientX : e.clientX;
-      pressStartY = e.touches ? e.touches[0].clientY : e.clientY;
-      longPressTimer = setTimeout(() => {
-        document.getElementById('addButton').classList.remove('hidden');
-      }, 500);
+            pageState.count -= 1;
+    if (pageState.currentPage >= pageState.count) {
+      pageState.currentPage = pageState.count - 1;
     }
+    this.renderPages();
+  }
+};
 
-    function handlePressMove(e) {
-      if (!longPressTimer) return;
-      const currentX = e.touches ? e.touches[0].clientX : e.clientX;
-      const currentY = e.touches ? e.touches[0].clientY : e.clientY;
-      const deltaX = Math.abs(currentX - pressStartX);
-      const deltaY = Math.abs(currentY - pressStartY);
-      if (deltaX > 10 || deltaY > 10) {
-        clearTimeout(longPressTimer);
-        longPressTimer = null;
-      }
-    }
+// ── 长按桌面显示加号 ──
+const desktopStageEl = document.getElementById('desktopStage');
+let longPressTimer;
 
-    function handlePressEnd() {
-      if (longPressTimer) {
-        clearTimeout(longPressTimer);
-        longPressTimer = null;
-      }
-    }
+desktopStageEl.addEventListener('touchstart', function(e) {
+  longPressTimer = setTimeout(function() {
+    document.getElementById('addButton').classList.remove('hidden');
+  }, 500);
+}, { passive: true });
 
-    desktopStageEl.addEventListener('touchstart', handlePressStart, { passive: true });
-    desktopStageEl.addEventListener('touchmove', handlePressMove, { passive: true });
-    desktopStageEl.addEventListener('touchend', handlePressEnd);
-    desktopStageEl.addEventListener('touchcancel', handlePressEnd);
-    desktopStageEl.addEventListener('mousedown', handlePressStart);
-    desktopStageEl.addEventListener('mousemove', handlePressMove);
-    window.addEventListener('mouseup', handlePressEnd);
+desktopStageEl.addEventListener('touchend', function() {
+  clearTimeout(longPressTimer);
+});
 
-    document.getElementById('addButton').addEventListener('click', function(e) {
-      e.stopPropagation();
-      if (typeof openWidgetPanel === 'function') {
-        openWidgetPanel();
-      }
-    });
+desktopStageEl.addEventListener('touchmove', function() {
+  clearTimeout(longPressTimer);
+});
 
-    document.addEventListener('click', function(e) {
-      const addButton = document.getElementById('addButton');
-      if (!addButton || addButton.classList.contains('hidden')) return;
-
-      if (e.target === addButton || addButton.contains(e.target)) return;
-
-      const isClickingUiElement = e.target.closest('.app-icon, .widget, #widgetPanel, .widget-group');
-
-      if (!isClickingUiElement) {
-        addButton.classList.add('hidden');
-      }
-    });
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-          .then(function(registration) {
-            console.log('ServiceWorker 注册成功');
-          })
-          .catch(function(err) {
-            console.log('ServiceWorker 注册失败: ', err);
-          });
-      });
-    }    
-
-    function updateDesktopTime() {
-      const now = new Date();
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      const timeEl = document.getElementById('deskTimeNum');
-      if (timeEl) timeEl.textContent = `${hours}:${minutes}`;
-
-      const dateEl = document.getElementById('deskDateText');
-      if (dateEl) {
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const date = String(now.getDate()).padStart(2, '0');
-        const weeks = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-        dateEl.textContent = `${month}月${date}日 ${weeks[now.getDay()]}`;
-      }
-    }
-
-    function bootstrap() {
-      DockSystem.render();
-      PageManager.init();
-      
-      updateDesktopTime();
-      setInterval(updateDesktopTime, 1000);
-      
-      console.log('玉界机·桌面框架已加载，时钟已启动');
-    }
+function bootstrap() {
+  DockSystem.render();
+  PageManager.init();
+  console.log('玉界机·桌面框架 (最多3指示器·透壁纸色块)');
+}
     
-    bootstrap();
+   bootstrap();
 
-    window.__JadeWorld = {
+        window.__JadeWorld = {
       ElementManager,
       GridSystem,
       DockSystem,
@@ -750,6 +652,19 @@
       pageState,
       dockState,
     };
+
+    
+  </script>
+
+  <!-- 小组件面板 JS -->
+<script src="/yujiexiaoshouji/widget-panel.js"></script>
+
+  <!-- 注册 Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/yujiexiaoshouji/sw.js');
+    }
   </script>
 </body>
 </html>
+  
