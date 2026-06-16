@@ -9,132 +9,691 @@
   <meta name="mobile-web-app-capable" content="yes">
   <title>玉界机</title>
   <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    html,body{width:100%;height:100%;overflow:hidden;background:#e8e8ed;font-family:-apple-system,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;touch-action:pan-x}
-    #app-root{width:100vw;height:100vh;display:flex;flex-direction:column;overflow:hidden;position:relative;background:#e8e8ed}
-    .desktop-stage{flex:1;width:100%;position:relative;overflow:hidden;touch-action:none}
-    .pages-viewport{display:flex;height:100%;width:100%;will-change:transform}
-    .desktop-page{flex:0 0 100%;width:100%;height:100%;position:relative;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(4,1fr);gap:0;padding:16px 14px}
-    .desktop-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:18px;background:rgba(0,0,0,0.03);color:#1d1d1f;font-size:11px;font-weight:500;overflow:hidden}
-    .page-indicator{display:flex;justify-content:center;align-items:center;gap:6px;padding:8px 0 18px;height:22px;background:transparent;margin-top:-4px}
-    .indicator-dot{width:5px;height:5px;border-radius:2.5px;background:rgba(0,0,0,0.06);transition:all 0.5s cubic-bezier(0.4,0.0,0.2,1)}
-    .indicator-dot.active{width:10px;background:rgba(255,255,255,0.85);border-radius:2.5px;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
-    .dock-wrapper{display:flex;justify-content:center;align-items:flex-end;width:100%;padding:0 10px 18px;background:transparent;pointer-events:none}
-    .dock-capsule{pointer-events:auto;display:flex;align-items:center;justify-content:space-evenly;gap:20px;padding:12px 24px;border-radius:24px;background:rgba(255,255,255,0.55);backdrop-filter:blur(22px) saturate(200%);-webkit-backdrop-filter:blur(22px) saturate(200%);box-shadow:0 2px 12px rgba(0,0,0,0.06),0 0.5px 0 0 rgba(255,255,255,0.4) inset,0 0 0 0.5px rgba(0,0,0,0.06);width:calc(100% - 20px);max-width:420px;margin:0 auto}
-    .dock-icon{width:56px;height:56px;border-radius:14px;background:rgba(255,255,255,0.4);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;font-size:26px;color:#1d1d1f;flex-shrink:0}
-    .dock-icon-placeholder{background:rgba(255,255,255,0.25);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#b0b0b8;font-size:24px}
-    .dock-icon-inner{width:32px;height:32px;border-radius:8px;background:rgba(0,0,0,0.07)}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #e8e8ed;
+      font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: pan-x;
+    }
+
+    #app-root {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      background: #e8e8ed;
+    }
+
+    .desktop-stage {
+      flex: 1;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    .pages-viewport {
+      display: flex;
+      height: 100%;
+      width: 100%;
+      will-change: transform;
+    }
+
+    .desktop-page {
+      flex: 0 0 100%;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      gap: 0;
+      padding: 16px 14px;
+    }
+
+    .desktop-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+      background: rgba(0,0,0,0.03);
+      color: #1d1d1f;
+      font-size: 11px;
+      font-weight: 500;
+      overflow: hidden;
+    }
+
+    /* ══════════════════════════════════════
+       分页指示器 · 最多显示3个 · 透壁纸色块
+       ══════════════════════════════════════ */
+    .page-indicator {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 0 18px;
+      height: 22px;
+      background: transparent;
+      margin-top: -4px;
+    }
+
+    .indicator-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 2.5px;
+      background: rgba(0,0,0,0.06);
+      transition: all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+
+    .indicator-dot.active {
+      width: 10px;
+      background: rgba(255,255,255,0.85);
+      border-radius: 2.5px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .indicator-dot.nearby {
+      background: rgba(0,0,0,0.06);
+    }
+
+    .indicator-dot.hidden-dot {
+      display: none;
+    }
+
+    /* ══════════════════════════════════════
+       Dock · 透壁纸色块 · 背景模糊+色彩渗透
+       ══════════════════════════════════════ */
+    .dock-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      width: 100%;
+      padding: 0 10px 18px;
+      background: transparent;
+      pointer-events: none;
+    }
+
+    .dock-capsule {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      gap: 20px;
+      padding: 12px 24px;
+      border-radius: 24px;
+      /* 透壁纸色块：背景模糊 + 色彩渗透 */
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(22px) saturate(200%);
+      -webkit-backdrop-filter: blur(22px) saturate(200%);
+      box-shadow:
+        0 2px 12px rgba(0,0,0,0.06),
+        0 0.5px 0 0 rgba(255,255,255,0.4) inset,
+        0 0 0 0.5px rgba(0,0,0,0.06);
+      width: calc(100% - 20px);
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .dock-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.4);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      color: #1d1d1f;
+      flex-shrink: 0;
+      transition: transform 0.16s ease;
+    }
+
+    .dock-icon-placeholder {
+      background: rgba(255,255,255,0.25);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #b0b0b8;
+      font-size: 24px;
+    }
+
+    .dock-icon-inner {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.07);
+    }
   </style>
-  <link rel="stylesheet" href="/yujiexiaoshouji/widget-panel.css">
+ <link rel="stylesheet" href="/yujiexiaoshouji/widget-panel.css">
 </head>
 <body>
   <div id="app-root">
     <div class="desktop-stage" id="desktopStage">
       <div class="pages-viewport" id="pagesViewport"></div>
     </div>
+
     <div class="page-indicator" id="pageIndicator"></div>
-    <div class="dock-wrapper"><div class="dock-capsule" id="dockCapsule"></div></div>
-    <button class="add-button hidden" id="addButton">+</button>
-    <div class="overlay" id="overlay" style="display:none"></div>
-    <div class="panel hidden" id="panel">
-      <div class="drag-handle" id="dragHandle"><div class="drag-handle-bar"></div></div>
-      <div class="panel-content">
-        <div class="panel-title">小组件</div>
-        <div class="widget-item"><div class="widget-header" data-widget="2x2"><span class="widget-label">2×2</span><span class="toggle-icon">›</span></div><div class="widget-body"><div class="widget-body-inner">2×2 小组件 · 占位内容</div></div></div>
-        <div class="widget-item"><div class="widget-header" data-widget="2x4"><span class="widget-label">2×4</span><span class="toggle-icon">›</span></div><div class="widget-body"><div class="widget-body-inner">2×4 小组件 · 占位内容</div></div></div>
-        <div class="widget-item"><div class="widget-header" data-widget="3x4"><span class="widget-label">3×4</span><span class="toggle-icon">›</span></div><div class="widget-body"><div class="widget-body-inner">3×4 小组件 · 占位内容</div></div></div>
-        <div class="widget-item"><div class="widget-header" data-widget="4x4"><span class="widget-label">4×4</span><span class="toggle-icon">›</span></div><div class="widget-body"><div class="widget-body-inner">4×4 小组件 · 占位内容</div></div></div>
+
+      <div class="dock-wrapper">
+    <div class="dock-capsule" id="dockCapsule"></div>
+  </div>
+
+  <!-- 小组件面板 -->
+  <button class="add-button hidden" id="addButton">+</button>
+  <div class="overlay" id="overlay" style="display:none;"></div>
+  <div class="panel hidden" id="panel">
+    <div class="drag-handle" id="dragHandle">
+      <div class="drag-handle-bar"></div>
+    </div>
+    <div class="panel-content">
+      <div class="panel-title">小组件</div>
+      <div class="widget-item">
+        <div class="widget-header" data-widget="2x2">
+          <span class="widget-label">2×2</span>
+          <span class="toggle-icon">›</span>
+        </div>
+        <div class="widget-body">
+          <div class="widget-body-inner">2×2 小组件 · 占位内容</div>
+        </div>
+      </div>
+      <div class="widget-item">
+        <div class="widget-header" data-widget="2x4">
+          <span class="widget-label">2×4</span>
+          <span class="toggle-icon">›</span>
+        </div>
+        <div class="widget-body">
+          <div class="widget-body-inner">2×4 小组件 · 占位内容</div>
+        </div>
+      </div>
+      <div class="widget-item">
+        <div class="widget-header" data-widget="3x4">
+          <span class="widget-label">3×4</span>
+          <span class="toggle-icon">›</span>
+        </div>
+        <div class="widget-body">
+          <div class="widget-body-inner">3×4 小组件 · 占位内容</div>
+        </div>
+      </div>
+      <div class="widget-item">
+        <div class="widget-header" data-widget="4x4">
+          <span class="widget-label">4×4</span>
+          <span class="toggle-icon">›</span>
+        </div>
+        <div class="widget-body">
+          <div class="widget-body-inner">4×4 小组件 · 占位内容</div>
+        </div>
       </div>
     </div>
   </div>
+  </div>
+
   <script type="module">
+    // ══════════════════════════════════════
+    // 玉界机 · 桌面底层框架
+    // ══════════════════════════════════════
+
     const desktopItems = new Map();
-    const pageState = { count: 3, currentPage: 0 };
-    const dockState = { items: [], maxSlots: 4 };
-    const ElementManager = {
-      addItem(item){if(!item.id||!item.type)return;desktopItems.set(item.id,{...item});this.renderAllPages()},
-      removeItem(id){desktopItems.delete(id);this.renderAllPages()},
-      getItemsByPage(idx){return Array.from(desktopItems.values()).filter(i=>i.pageIndex===idx)},
-      getGridStyle(item){return{gridColumn:`${item.gridX+1}/${item.gridX+1+item.width}`,gridRow:`${item.gridY+1}/${item.gridY+1+item.height}`}},
-      renderAllPages(){PageManager.renderPages()}
+
+    const pageState = {
+      count: 3,
+      currentPage: 0,
     };
+
+    const dockState = {
+      items: [],
+      maxSlots: 4,
+    };
+
+    const ElementManager = {
+      addItem(item) {
+        if (!item.id || !item.type) return;
+        desktopItems.set(item.id, { ...item });
+        this.renderAllPages();
+      },
+      removeItem(id) {
+        desktopItems.delete(id);
+        this.renderAllPages();
+      },
+      getItemsByPage(idx) {
+        return Array.from(desktopItems.values()).filter(i => i.pageIndex === idx);
+      },
+      getGridStyle(item) {
+        return {
+          gridColumn: `${item.gridX + 1} / ${item.gridX + 1 + item.width}`,
+          gridRow: `${item.gridY + 1} / ${item.gridY + 1 + item.height}`,
+        };
+      },
+      renderAllPages() {
+        PageManager.renderPages();
+      }
+    };
+
+    const GridSystem = {
+      columns: 6,
+      rows: 4,
+      isValid(gx, gy, w, h) {
+        return gx>=0 && gy>=0 && gx+w<=this.columns && gy+h<=this.rows;
+      }
+    };
+
     const DockSystem = {
-      render(){
-        const c=document.getElementById('dockCapsule');if(!c)return;c.innerHTML='';
-        for(let i=0;i<this.maxSlots;i++){
-          const d=document.createElement('div');d.className='dock-icon';
-          const id=dockState.items[i]||null;
-          if(id&&desktopItems.has(id)){const it=desktopItems.get(id);d.innerHTML=`<div class="dock-icon-inner" style="display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(0,0,0,0.06)">${it.name?.charAt(0)||'●'}</div>`}
-          else{d.classList.add('dock-icon-placeholder');d.innerHTML='<div class="dock-icon-inner" style="background:rgba(0,0,0,0.03)"></div>'}
-          c.appendChild(d)
+      render() {
+        const capsule = document.getElementById('dockCapsule');
+        if (!capsule) return;
+        capsule.innerHTML = '';
+        for (let i = 0; i < this.maxSlots; i++) {
+          const icon = document.createElement('div');
+          icon.className = 'dock-icon';
+          const itemId = dockState.items[i] || null;
+          if (itemId && desktopItems.has(itemId)) {
+            const item = desktopItems.get(itemId);
+            icon.innerHTML = `<div class="dock-icon-inner" style="display:flex; align-items:center; justify-content:center; font-size:18px; background:rgba(0,0,0,0.06);">${item.name?.charAt(0) || '●'}</div>`;
+          } else {
+            icon.classList.add('dock-icon-placeholder');
+            icon.innerHTML = `<div class="dock-icon-inner" style="background:rgba(0,0,0,0.03);"></div>`;
+          }
+          capsule.appendChild(icon);
         }
       },
-      get maxSlots(){return dockState.maxSlots}
+      get maxSlots() { return dockState.maxSlots; },
+      addToDock(id) {
+        if (dockState.items.length >= this.maxSlots) return false;
+        if (!dockState.items.includes(id)) {
+          dockState.items.push(id);
+          this.render();
+          return true;
+        }
+        return false;
+      },
+      removeFromDock(id) {
+        const idx = dockState.items.indexOf(id);
+        if (idx > -1) {
+          dockState.items.splice(idx, 1);
+          this.render();
+        }
+      }
     };
+
     const PageManager = {
-      viewport:null,indicator:null,stage:null,previousPage:0,
-      dragState:{startX:0,startScroll:0,isDragging:false,threshold:60,lastPageTime:0,cooldown:350},
-      init(){this.viewport=document.getElementById('pagesViewport');this.indicator=document.getElementById('pageIndicator');this.stage=document.getElementById('desktopStage');this.previousPage=pageState.currentPage;this.setupDragListeners();this.renderPages()},
-      setupDragListeners(){
-        if(!this.stage||!this.viewport)return;
-        this.stage.addEventListener('touchstart',e=>this.onDragStart(e),{passive:false});
-        this.stage.addEventListener('touchmove',e=>this.onDragMove(e),{passive:false});
-        this.stage.addEventListener('touchend',e=>this.onDragEnd(e))
+      viewport: null,
+      indicator: null,
+      stage: null,
+      previousPage: 0,
+
+      dragState: {
+        startX: 0,
+        startScroll: 0,
+        isDragging: false,
+        threshold: 60,
+        lastPageTime: 0,
+        cooldown: 350,
       },
-      onDragStart(e){if(e.cancelable)e.preventDefault();const cx=e.touches?e.touches[0].clientX:e.clientX;this.dragState.startX=cx;this.dragState.startScroll=this.getCurrentScroll();this.dragState.isDragging=true;this.viewport.style.transition='none'},
-      onDragMove(e){if(!this.dragState.isDragging)return;if(e.cancelable)e.preventDefault();const cx=e.touches?e.touches[0].clientX:e.clientX;const dx=this.dragState.startX-cx;const ns=this.dragState.startScroll+dx;const max=(pageState.count-1)*this.getPageWidth();const cs=Math.max(0,Math.min(ns,max));this.viewport.style.transform=`translateX(${-cs}px)`;this.updateIndicatorDuringScroll(cs)},
-      onDragEnd(e){
-        if(!this.dragState.isDragging)return;this.dragState.isDragging=false;
-        const cs=this.getCurrentScroll();const dfs=cs-this.dragState.startScroll;let tp=pageState.currentPage;
-        if(Math.abs(dfs)>this.dragState.threshold)tp=dfs>0?Math.min(pageState.count-1,pageState.currentPage+1):Math.max(0,pageState.currentPage-1);
-        const now=Date.now();if(now-this.dragState.lastPageTime<this.dragState.cooldown)tp=pageState.currentPage;
-        tp=Math.max(0,Math.min(pageState.count-1,tp));this.animateToPage(tp);this.dragState.lastPageTime=now
+
+      init() {
+        this.viewport = document.getElementById('pagesViewport');
+        this.indicator = document.getElementById('pageIndicator');
+        this.stage = document.getElementById('desktopStage');
+        this.previousPage = pageState.currentPage;
+        this.setupDragListeners();
+        this.renderPages();
       },
-      animateToPage(i){this.previousPage=pageState.currentPage;const ts=i*this.getPageWidth();this.viewport.style.transition='transform 0.3s cubic-bezier(0.25,0.1,0.25,1)';this.viewport.style.transform=`translateX(${-ts}px)`;if(i!==pageState.currentPage){pageState.currentPage=i;this.renderIndicatorWithAnimation(this.previousPage,i)}},
-      updateIndicatorDuringScroll(cs){const pw=this.getPageWidth();if(pw<=0)return;const p=cs/pw;const fp=Math.floor(p);const tp=Math.min(fp+1,pageState.count-1);if(fp!==tp)this.renderSlidingIndicator(fp,tp,p-fp)},
-      renderSlidingIndicator(fp,tp,pc){
-        if(!this.indicator)return;this.indicator.innerHTML='';
-        const vp=this.getVisiblePageRange(fp,tp);
-        vp.forEach(i=>{const d=document.createElement('span');d.className='indicator-dot';
-          if(i===fp){d.style.width=`${10-5*pc}px`;d.style.opacity=0.06+0.79*(1-pc);d.style.background=`rgba(255,255,255,${0.06+0.79*(1-pc)})`}
-          else if(i===tp){d.style.width=`${5+5*pc}px`;d.style.opacity=0.06+0.79*pc;d.style.background=`rgba(255,255,255,${0.06+0.79*pc})`}
-          else{d.style.width='5px';d.style.background='rgba(0,0,0,0.06)'}
-          this.indicator.appendChild(d)
-        })
+
+      setupDragListeners() {
+        if (!this.stage || !this.viewport) return;
+
+        this.stage.addEventListener('touchstart', (e) => this.onDragStart(e), { passive: false });
+        this.stage.addEventListener('touchmove', (e) => this.onDragMove(e), { passive: false });
+        this.stage.addEventListener('touchend', (e) => this.onDragEnd(e));
+
+        this.stage.addEventListener('mousedown', (e) => this.onDragStart(e));
+        window.addEventListener('mousemove', (e) => {
+          if (this.dragState.isDragging) this.onDragMove(e);
+        });
+        window.addEventListener('mouseup', (e) => {
+          if (this.dragState.isDragging) this.onDragEnd(e);
+        });
       },
-      getVisiblePageRange(fp,tp){const pages=new Set();if(pageState.count<=3){for(let i=0;i<pageState.count;i++)pages.add(i)}else{pages.add(fp);if(fp>0)pages.add(fp-1);if(fp<pageState.count-1)pages.add(fp+1);if(pages.size>3){if(fp>1)pages.delete(fp-2);if(fp<pageState.count-2)pages.delete(fp+2)}}return Array.from(pages).sort((a,b)=>a-b)},
-      renderIndicatorWithAnimation(fp,tp){
-        if(!this.indicator)return;this.indicator.innerHTML='';
-        const vp=this.getVisiblePageRange(Math.min(fp,tp),Math.max(fp,tp));
-        vp.forEach(i=>{const d=document.createElement('span');d.className='indicator-dot';if(i===tp)d.classList.add('active');else if(i!==fp&&i!==tp){d.style.width='5px';d.style.background='rgba(0,0,0,0.06)'}if(i===fp){d.style.width='5px';d.style.opacity='0.06';d.style.background='rgba(0,0,0,0.06)';setTimeout(()=>{d.style.transition='all 0.3s ease';d.style.opacity='1'},50)}d.addEventListener('click',()=>this.animateToPage(i));this.indicator.appendChild(d)});
-        setTimeout(()=>{this.renderIndicator()},400)
+
+      onDragStart(e) {
+        if (e.cancelable) e.preventDefault();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        this.dragState.startX = clientX;
+        this.dragState.startScroll = this.getCurrentScroll();
+        this.dragState.isDragging = true;
+        this.viewport.style.transition = 'none';
       },
-      getCurrentScroll(){if(!this.viewport)return 0;const t=this.viewport.style.transform;const m=t.match(/translateX\((-?\d+(\.\d+)?)px\)/);return m?Math.abs(parseFloat(m[1])):0},
-      getPageWidth(){return this.stage?this.stage.clientWidth:window.innerWidth},
-      renderPages(){
-        if(!this.viewport)return;const cs=this.getCurrentScroll();this.viewport.innerHTML='';
-        for(let i=0;i<pageState.count;i++){const p=document.createElement('div');p.className='desktop-page';p.dataset.pageIndex=i;const items=ElementManager.getItemsByPage(i);items.forEach(item=>{const el=document.createElement('div');el.className='desktop-item';const gs=ElementManager.getGridStyle(item);el.style.gridColumn=gs.gridColumn;el.style.gridRow=gs.gridRow;el.innerHTML=`<div style="font-size:26px;margin-bottom:3px;opacity:0.6">${item.type==='widget'?'▣':'◎'}</div><span style="font-size:11px">${item.name||''}</span>`;p.appendChild(el)});this.viewport.appendChild(p)}
+
+      onDragMove(e) {
+        if (!this.dragState.isDragging) return;
+        if (e.cancelable) e.preventDefault();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const deltaX = this.dragState.startX - clientX;
+        const newScroll = this.dragState.startScroll + deltaX;
+        const maxScroll = (pageState.count - 1) * this.getPageWidth();
+        const clampedScroll = Math.max(0, Math.min(newScroll, maxScroll));
+        this.viewport.style.transform = `translateX(${-clampedScroll}px)`;
+        this.updateIndicatorDuringScroll(clampedScroll);
+      },
+
+      onDragEnd(e) {
+        if (!this.dragState.isDragging) return;
+        this.dragState.isDragging = false;
+
+        const currentScroll = this.getCurrentScroll();
+        const deltaFromStart = currentScroll - this.dragState.startScroll;
+
+        let targetPage = pageState.currentPage;
+
+        if (Math.abs(deltaFromStart) > this.dragState.threshold) {
+          targetPage = deltaFromStart > 0
+            ? Math.min(pageState.count - 1, pageState.currentPage + 1)
+            : Math.max(0, pageState.currentPage - 1);
+        }
+
+        const now = Date.now();
+        if (now - this.dragState.lastPageTime < this.dragState.cooldown) {
+          targetPage = pageState.currentPage;
+        }
+
+        targetPage = Math.max(0, Math.min(pageState.count - 1, targetPage));
+        this.animateToPage(targetPage);
+        this.dragState.lastPageTime = now;
+      },
+
+      animateToPage(pageIndex) {
+        this.previousPage = pageState.currentPage;
+        const targetScroll = pageIndex * this.getPageWidth();
+        this.viewport.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)';
+        this.viewport.style.transform = `translateX(${-targetScroll}px)`;
+
+        if (pageIndex !== pageState.currentPage) {
+          pageState.currentPage = pageIndex;
+          this.renderIndicatorWithAnimation(this.previousPage, pageIndex);
+        }
+      },
+
+      updateIndicatorDuringScroll(currentScroll) {
+        const pageWidth = this.getPageWidth();
+        if (pageWidth <= 0) return;
+        const progress = currentScroll / pageWidth;
+        const fromPage = Math.floor(progress);
+        const toPage = Math.min(fromPage + 1, pageState.count - 1);
+        if (fromPage !== toPage) {
+          this.renderSlidingIndicator(fromPage, toPage, progress - fromPage);
+        }
+      },
+
+      renderSlidingIndicator(fromPage, toPage, percent) {
+        if (!this.indicator) return;
+        this.indicator.innerHTML = '';
+        
+        const visiblePages = this.getVisiblePageRange(fromPage, toPage);
+        
+        visiblePages.forEach(pageIndex => {
+          const dot = document.createElement('span');
+          dot.className = 'indicator-dot';
+          
+          if (pageIndex === fromPage) {
+            const width = 10 - (5 * percent);
+            const opacity = 0.06 + (0.79 * (1 - percent));
+            dot.style.width = `${width}px`;
+            dot.style.opacity = opacity;
+            dot.style.background = `rgba(255,255,255,${0.06 + 0.79 * (1 - percent)})`;
+            dot.style.boxShadow = percent > 0.5 ? 'none' : '0 1px 3px rgba(0,0,0,0.08)';
+          } else if (pageIndex === toPage) {
+            const width = 5 + (5 * percent);
+            const opacity = 0.06 + (0.79 * percent);
+            dot.style.width = `${width}px`;
+            dot.style.opacity = opacity;
+            dot.style.background = `rgba(255,255,255,${0.06 + 0.79 * percent})`;
+            dot.style.boxShadow = percent > 0.5 ? '0 1px 3px rgba(0,0,0,0.08)' : 'none';
+          } else {
+            dot.style.width = '5px';
+            dot.style.background = 'rgba(0,0,0,0.06)';
+          }
+          
+          this.indicator.appendChild(dot);
+        });
+      },
+
+      getVisiblePageRange(fromPage, toPage) {
+        const current = fromPage;
+        const pages = new Set();
+        
+        // 始终包含当前页附近的页面，最多显示3个
+        if (pageState.count <= 3) {
+          for (let i = 0; i < pageState.count; i++) pages.add(i);
+        } else {
+          pages.add(current);
+          if (current > 0) pages.add(current - 1);
+          if (current < pageState.count - 1) pages.add(current + 1);
+          
+          // 确保正好3个，优先保留当前页和相邻页
+          if (pages.size > 3) {
+            if (current > 1) pages.delete(current - 2);
+            if (current < pageState.count - 2) pages.delete(current + 2);
+          }
+        }
+        
+        return Array.from(pages).sort((a, b) => a - b);
+      },
+
+      renderIndicatorWithAnimation(fromPage, toPage) {
+        if (!this.indicator) return;
+        
+        // 先显示过渡动画
+        this.indicator.innerHTML = '';
+        const visiblePages = this.getVisiblePageRange(Math.min(fromPage, toPage), Math.max(fromPage, toPage));
+        
+        visiblePages.forEach(pageIndex => {
+          const dot = document.createElement('span');
+          dot.className = 'indicator-dot';
+          
+          if (pageIndex === toPage) {
+            dot.classList.add('active');
+          } else if (pageIndex !== fromPage && pageIndex !== toPage) {
+            dot.style.width = '5px';
+            dot.style.background = 'rgba(0,0,0,0.06)';
+          }
+          
+          if (pageIndex === fromPage) {
+            dot.style.width = '5px';
+            dot.style.opacity = '0.06';
+            dot.style.background = 'rgba(0,0,0,0.06)';
+            setTimeout(() => {
+              dot.style.transition = 'all 0.3s ease';
+              dot.style.opacity = '1';
+            }, 50);
+          }
+          
+          dot.addEventListener('click', () => this.animateToPage(pageIndex));
+          this.indicator.appendChild(dot);
+        });
+        
+        // 动画结束后设置最终状态
+        setTimeout(() => {
+          this.renderIndicator();
+        }, 400);
+      },
+
+      getCurrentScroll() {
+        if (!this.viewport) return 0;
+        const transform = this.viewport.style.transform;
+        const match = transform.match(/translateX\((-?\d+(\.\d+)?)px\)/);
+        return match ? Math.abs(parseFloat(match[1])) : 0;
+      },
+
+      getPageWidth() {
+        return this.stage ? this.stage.clientWidth : window.innerWidth;
+      },
+
+      renderPages() {
+        if (!this.viewport) return;
+        const currentScroll = this.getCurrentScroll();
+        this.viewport.innerHTML = '';
+
+        for (let i = 0; i < pageState.count; i++) {
+          const page = document.createElement('div');
+          page.className = 'desktop-page';
+          page.dataset.pageIndex = i;
+
+          const items = ElementManager.getItemsByPage(i);
+          items.forEach(item => {
+            const el = document.createElement('div');
+            el.className = 'desktop-item';
+            const gs = ElementManager.getGridStyle(item);
+            el.style.gridColumn = gs.gridColumn;
+            el.style.gridRow = gs.gridRow;
+            el.innerHTML = `
+              <div style="font-size:26px; margin-bottom:3px; opacity:0.6;">${item.type==='widget'?'▣':'◎'}</div>
+              <span style="font-size:11px;">${item.name||''}</span>
+            `;
+            page.appendChild(el);
+          });
+
+          this.viewport.appendChild(page);
+        }
+
         this.renderIndicator();
-        requestAnimationFrame(()=>{const max=(pageState.count-1)*this.getPageWidth();const cl=Math.min(cs,max);this.viewport.style.transition='none';this.viewport.style.transform=`translateX(${-cl}px)`})
+
+        requestAnimationFrame(() => {
+          const maxScroll = (pageState.count - 1) * this.getPageWidth();
+          const clamped = Math.min(currentScroll, maxScroll);
+          this.viewport.style.transition = 'none';
+          this.viewport.style.transform = `translateX(${-clamped}px)`;
+        });
       },
-      renderIndicator(){if(!this.indicator)return;this.indicator.innerHTML='';const vp=this.getVisiblePageRange(pageState.currentPage,pageState.currentPage);vp.forEach(i=>{const d=document.createElement('span');d.className='indicator-dot';if(i===pageState.currentPage)d.classList.add('active');d.addEventListener('click',()=>this.animateToPage(i));this.indicator.appendChild(d)})},
-      addPage(){pageState.count++;this.renderPages()},
-      removePage(i){if(pageState.count<=1)return;const items=ElementManager.getItemsByPage(i);if(items.length>0)return;desktopItems.forEach((item,id)=>{if(item.pageIndex>i)item.pageIndex--});pageState.count--;if(pageState.currentPage>=pageState.count)pageState.currentPage=pageState.count-1;this.renderPages()}
+
+      renderIndicator() {
+        if (!this.indicator) return;
+        this.indicator.innerHTML = '';
+        
+        const visiblePages = this.getVisiblePageRange(pageState.currentPage, pageState.currentPage);
+        
+        visiblePages.forEach(pageIndex => {
+          const dot = document.createElement('span');
+          dot.className = 'indicator-dot';
+          if (pageIndex === pageState.currentPage) dot.classList.add('active');
+          dot.addEventListener('click', () => this.animateToPage(pageIndex));
+          this.indicator.appendChild(dot);
+        });
+      },
+
+      addPage() {
+        pageState.count += 1;
+        this.renderPages();
+      },
+
+      removePage(index) {
+        if (pageState.count <= 1) return;
+        const items = ElementManager.getItemsByPage(index);
+        if (items.length > 0) return;
+
+        desktopItems.forEach((item, id) => {
+          if (item.pageIndex > index) item.pageIndex -= 1;
+        });
+
+        pageState.count -= 1;
+        if (pageState.currentPage >= pageState.count) {
+          pageState.currentPage = pageState.count - 1;
+        }
+  this.renderPages();
+  }
+};  
+
+
+// ── 长按桌面显示加号（加入防抖容差与鼠标支持） ──
+const desktopStageEl = document.getElementById('desktopStage');
+let longPressTimer = null;
+let pressStartX = 0;
+let pressStartY = 0;
+
+function handlePressStart(e) {
+  pressStartX = e.touches ? e.touches[0].clientX : e.clientX;
+  pressStartY = e.touches ? e.touches[0].clientY : e.clientY;
+  
+  longPressTimer = setTimeout(function() {
+    document.getElementById('addButton').classList.remove('hidden');
+  }, 500);
+}
+
+function handlePressMove(e) {
+  if (!longPressTimer) return;
+  
+  const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+  const currentY = e.touches ? e.touches[0].clientY : e.clientY;
+  
+  const deltaX = Math.abs(currentX - pressStartX);
+  const deltaY = Math.abs(currentY - pressStartY);
+
+  if (deltaX > 10 || deltaY > 10) {
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+  }
+}
+
+function handlePressEnd() {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+  }
+}
+
+desktopStageEl.addEventListener('touchstart', handlePressStart, { passive: true });
+desktopStageEl.addEventListener('touchmove', handlePressMove, { passive: true });
+desktopStageEl.addEventListener('touchend', handlePressEnd);
+desktopStageEl.addEventListener('touchcancel', handlePressEnd);
+
+desktopStageEl.addEventListener('mousedown', handlePressStart);
+desktopStageEl.addEventListener('mousemove', handlePressMove);
+window.addEventListener('mouseup', handlePressEnd);
+
+function bootstrap() {
+  DockSystem.render();
+  PageManager.init();
+  console.log('玉界机·桌面框架 (最多3指示器·透壁纸色块)');
+}
+    
+   bootstrap();
+
+        window.__JadeWorld = {
+      ElementManager,
+      GridSystem,
+      DockSystem,
+      PageManager,
+      desktopItems,
+      pageState,
+      dockState,
     };
 
-    // 长按显示加号
-    const stage=document.getElementById('desktopStage');
-    let timer;
-    stage.addEventListener('touchstart',()=>{timer=setTimeout(()=>{document.getElementById('addButton').classList.remove('hidden')},500)},{passive:true});
-    stage.addEventListener('touchend',()=>clearTimeout(timer));
-    stage.addEventListener('touchmove',()=>clearTimeout(timer));
-
-    function bootstrap(){DockSystem.render();PageManager.init()}
-    bootstrap();
+    
   </script>
-  <script src="/yujiexiaoshouji/widget-panel.js"></script>
+
+  <!-- 小组件面板 JS -->
+<script src="/yujiexiaoshouji/widget-panel.js"></script>
+
+  <!-- 注册 Service Worker -->
   <script>
-    if('serviceWorker' in navigator){navigator.serviceWorker.register('/yujiexiaoshouji/sw.js')}
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/yujiexiaoshouji/sw.js');
+    }
   </script>
 </body>
 </html>
+  
