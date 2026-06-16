@@ -78,9 +78,6 @@
       overflow: hidden;
     }
 
-    /* ══════════════════════════════════════
-       分页指示器 · 最多显示3个 · 透壁纸色块
-       ══════════════════════════════════════ */
     .page-indicator {
       display: flex;
       justify-content: center;
@@ -115,9 +112,6 @@
       display: none;
     }
 
-    /* ══════════════════════════════════════
-       Dock · 透壁纸色块 · 背景模糊+色彩渗透
-       ══════════════════════════════════════ */
     .dock-wrapper {
       display: flex;
       justify-content: center;
@@ -136,7 +130,6 @@
       gap: 20px;
       padding: 12px 24px;
       border-radius: 24px;
-      /* 透壁纸色块：背景模糊 + 色彩渗透 */
       background: rgba(255,255,255,0.55);
       backdrop-filter: blur(22px) saturate(200%);
       -webkit-backdrop-filter: blur(22px) saturate(200%);
@@ -180,7 +173,7 @@
       background: rgba(0,0,0,0.07);
     }
   </style>
- <link rel="stylesheet" href="/yujiexiaoshouji/widget-panel.css">
+  <link rel="stylesheet" href="/yujiexiaoshouji/widget-panel.css">
 </head>
 <body>
   <div id="app-root">
@@ -190,64 +183,59 @@
 
     <div class="page-indicator" id="pageIndicator"></div>
 
-      <div class="dock-wrapper">
-    <div class="dock-capsule" id="dockCapsule"></div>
-  </div>
+    <div class="dock-wrapper">
+      <div class="dock-capsule" id="dockCapsule"></div>
+    </div>
 
-  <!-- 小组件面板 -->
-  <button class="add-button hidden" id="addButton">+</button>
-  <div class="overlay" id="overlay" style="display:none;"></div>
-  <div class="panel hidden" id="panel">
-    <div class="drag-handle" id="dragHandle">
-      <div class="drag-handle-bar"></div>
+    <button class="add-button hidden" id="addButton">+</button>
+    <div class="overlay" id="overlay" style="display:none;"></div>
+    <div class="panel hidden" id="panel">
+      <div class="drag-handle" id="dragHandle">
+        <div class="drag-handle-bar"></div>
+      </div>
+      <div class="panel-content">
+        <div class="panel-title">小组件</div>
+        <div class="widget-item">
+          <div class="widget-header" data-widget="2x2">
+            <span class="widget-label">2×2</span>
+            <span class="toggle-icon">›</span>
+          </div>
+          <div class="widget-body">
+            <div class="widget-body-inner">2×2 小组件 · 占位内容</div>
+          </div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-header" data-widget="2x4">
+            <span class="widget-label">2×4</span>
+            <span class="toggle-icon">›</span>
+          </div>
+          <div class="widget-body">
+            <div class="widget-body-inner">2×4 小组件 · 占位内容</div>
+          </div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-header" data-widget="3x4">
+            <span class="widget-label">3×4</span>
+            <span class="toggle-icon">›</span>
+          </div>
+          <div class="widget-body">
+            <div class="widget-body-inner">3×4 小组件 · 占位内容</div>
+          </div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-header" data-widget="4x4">
+            <span class="widget-label">4×4</span>
+            <span class="toggle-icon">›</span>
+          </div>
+          <div class="widget-body">
+            <div class="widget-body-inner">4×4 小组件 · 占位内容</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="panel-content">
-      <div class="panel-title">小组件</div>
-      <div class="widget-item">
-        <div class="widget-header" data-widget="2x2">
-          <span class="widget-label">2×2</span>
-          <span class="toggle-icon">›</span>
-        </div>
-        <div class="widget-body">
-          <div class="widget-body-inner">2×2 小组件 · 占位内容</div>
-        </div>
-      </div>
-      <div class="widget-item">
-        <div class="widget-header" data-widget="2x4">
-          <span class="widget-label">2×4</span>
-          <span class="toggle-icon">›</span>
-        </div>
-        <div class="widget-body">
-          <div class="widget-body-inner">2×4 小组件 · 占位内容</div>
-        </div>
-      </div>
-      <div class="widget-item">
-        <div class="widget-header" data-widget="3x4">
-          <span class="widget-label">3×4</span>
-          <span class="toggle-icon">›</span>
-        </div>
-        <div class="widget-body">
-          <div class="widget-body-inner">3×4 小组件 · 占位内容</div>
-        </div>
-      </div>
-      <div class="widget-item">
-        <div class="widget-header" data-widget="4x4">
-          <span class="widget-label">4×4</span>
-          <span class="toggle-icon">›</span>
-        </div>
-        <div class="widget-body">
-          <div class="widget-body-inner">4×4 小组件 · 占位内容</div>
-        </div>
-      </div>
-    </div>
-  </div>
   </div>
 
   <script type="module">
-    // ══════════════════════════════════════
-    // 玉界机 · 桌面底层框架
-    // ══════════════════════════════════════
-
     const desktopItems = new Map();
 
     const pageState = {
@@ -476,7 +464,6 @@
         const current = fromPage;
         const pages = new Set();
         
-        // 始终包含当前页附近的页面，最多显示3个
         if (pageState.count <= 3) {
           for (let i = 0; i < pageState.count; i++) pages.add(i);
         } else {
@@ -484,7 +471,6 @@
           if (current > 0) pages.add(current - 1);
           if (current < pageState.count - 1) pages.add(current + 1);
           
-          // 确保正好3个，优先保留当前页和相邻页
           if (pages.size > 3) {
             if (current > 1) pages.delete(current - 2);
             if (current < pageState.count - 2) pages.delete(current + 2);
@@ -497,7 +483,6 @@
       renderIndicatorWithAnimation(fromPage, toPage) {
         if (!this.indicator) return;
         
-        // 先显示过渡动画
         this.indicator.innerHTML = '';
         const visiblePages = this.getVisiblePageRange(Math.min(fromPage, toPage), Math.max(fromPage, toPage));
         
@@ -526,7 +511,6 @@
           this.indicator.appendChild(dot);
         });
         
-        // 动画结束后设置最终状态
         setTimeout(() => {
           this.renderIndicator();
         }, 400);
@@ -613,94 +597,91 @@
         if (pageState.currentPage >= pageState.count) {
           pageState.currentPage = pageState.count - 1;
         }
-  this.renderPages();
-  }
-};  
+        this.renderPages();
+      }
+    };  
 
+    let longPressTimer = null;
+    let pressStartX = 0;
+    let pressStartY = 0;
+    const desktopStageEl = document.getElementById('desktopStage');
 
-// ── 长按桌面显示加号（加入编辑模式防冲突精准判定） ──
-let longPressTimer = null;
-let pressStartX = 0;
-let pressStartY = 0;
-const desktopStageEl = document.getElementById('desktopStage');
+    function handlePressStart(e) {
+      pressStartX = e.touches ? e.touches[0].clientX : e.clientX;
+      pressStartY = e.touches ? e.touches[0].clientY : e.clientY;
+      longPressTimer = setTimeout(() => {
+        document.getElementById('addButton').classList.remove('hidden');
+      }, 500);
+    }
 
-function handlePressStart(e) {
-  pressStartX = e.touches ? e.touches[0].clientX : e.clientX;
-  pressStartY = e.touches ? e.touches[0].clientY : e.clientY;
-  longPressTimer = setTimeout(() => {
-    document.getElementById('addButton').classList.remove('hidden');
-  }, 500);
-}
+    function handlePressMove(e) {
+      if (!longPressTimer) return;
+      const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+      const currentY = e.touches ? e.touches[0].clientY : e.clientY;
+      const deltaX = Math.abs(currentX - pressStartX);
+      const deltaY = Math.abs(currentY - pressStartY);
+      if (deltaX > 10 || deltaY > 10) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+    }
 
-function handlePressMove(e) {
-  if (!longPressTimer) return;
-  const currentX = e.touches ? e.touches[0].clientX : e.clientX;
-  const currentY = e.touches ? e.touches[0].clientY : e.clientY;
-  const deltaX = Math.abs(currentX - pressStartX);
-  const deltaY = Math.abs(currentY - pressStartY);
-  if (deltaX > 10 || deltaY > 10) {
-    clearTimeout(longPressTimer);
-    longPressTimer = null;
-  }
-}
+    function handlePressEnd() {
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+    }
 
-function handlePressEnd() {
-  if (longPressTimer) {
-    clearTimeout(longPressTimer);
-    longPressTimer = null;
-  }
-}
+    desktopStageEl.addEventListener('touchstart', handlePressStart, { passive: true });
+    desktopStageEl.addEventListener('touchmove', handlePressMove, { passive: true });
+    desktopStageEl.addEventListener('touchend', handlePressEnd);
+    desktopStageEl.addEventListener('touchcancel', handlePressEnd);
+    desktopStageEl.addEventListener('mousedown', handlePressStart);
+    desktopStageEl.addEventListener('mousemove', handlePressMove);
+    window.addEventListener('mouseup', handlePressEnd);
 
-desktopStageEl.addEventListener('touchstart', handlePressStart, { passive: true });
-desktopStageEl.addEventListener('touchmove', handlePressMove, { passive: true });
-desktopStageEl.addEventListener('touchend', handlePressEnd);
-desktopStageEl.addEventListener('touchcancel', handlePressEnd);
-desktopStageEl.addEventListener('mousedown', handlePressStart);
-desktopStageEl.addEventListener('mousemove', handlePressMove);
-window.addEventListener('mouseup', handlePressEnd);
+    document.getElementById('addButton').addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (typeof openWidgetPanel === 'function') {
+        openWidgetPanel();
+      }
+    });
 
-document.getElementById('addButton').addEventListener('click', function(e) {
-  e.stopPropagation();
-  if (typeof openWidgetPanel === 'function') {
-    openWidgetPanel();
-  }
-});
+    document.addEventListener('click', function(e) {
+      const addButton = document.getElementById('addButton');
+      if (!addButton || addButton.classList.contains('hidden')) return;
 
-document.addEventListener('click', function(e) {
-  const addButton = document.getElementById('addButton');
-  if (!addButton || addButton.classList.contains('hidden')) return;
+      if (e.target === addButton || addButton.contains(e.target)) return;
 
-  if (e.target === addButton || addButton.contains(e.target)) return;
+      const isClickingUiElement = e.target.closest('.app-icon, .widget, #widgetPanel, .widget-group');
 
-  const isClickingUiElement = e.target.closest('.app-icon, .widget, #widgetPanel, .widget-group');
+      if (!isClickingUiElement) {
+        addButton.classList.add('hidden');
+      }
+    });
 
-  if (!isClickingUiElement) {
-    addButton.classList.add('hidden');
-  }
-});
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/sw.js')
-      .then(function(registration) {
-        console.log('ServiceWorker 注册成功');
-      })
-      .catch(function(err) {
-        console.log('ServiceWorker 注册失败: ', err);
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+          .then(function(registration) {
+            console.log('ServiceWorker 注册成功');
+          })
+          .catch(function(err) {
+            console.log('ServiceWorker 注册失败: ', err);
+          });
       });
-  });
-}    
-window.addEventListener('mouseup', handlePressEnd);
+    }    
 
-function bootstrap() {
-  DockSystem.render();
-  PageManager.init();
-  console.log('玉界机·桌面框架 (最多3指示器·透壁纸色块)');
-}
+    function bootstrap() {
+      DockSystem.render();
+      PageManager.init();
+      console.log('玉界机·桌面框架 (最多3指示器·透壁纸色块)');
+    }
     
-   bootstrap();
+    bootstrap();
 
-        window.__JadeWorld = {
+    window.__JadeWorld = {
       ElementManager,
       GridSystem,
       DockSystem,
@@ -709,19 +690,8 @@ function bootstrap() {
       pageState,
       dockState,
     };
-
-    
   </script>
 
-  <!-- 小组件面板 JS -->
-<script src="/yujiexiaoshouji/widget-panel.js"></script>
-
-  <!-- 注册 Service Worker -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/yujiexiaoshouji/sw.js');
-    }
-  </script>
+  <script src="/yujiexiaoshouji/widget-panel.js"></script>
 </body>
 </html>
-  
