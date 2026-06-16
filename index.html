@@ -618,43 +618,32 @@
 };  
 
 
-// ── 变量初始化 ──
-let longPressTimer = null;
+// ── 长按桌面显示加号（防抖容差与空白处点击隐藏） ──
+    let longPressTimer = null;
 let pressStartX = 0;
 let pressStartY = 0;
 const desktopStageEl = document.getElementById('desktopStage');
 
-// ── 长按开始事件 ──
 function handlePressStart(e) {
-  // 兼容记录触摸点和鼠标点击的初始坐标
   pressStartX = e.touches ? e.touches[0].clientX : e.clientX;
   pressStartY = e.touches ? e.touches[0].clientY : e.clientY;
-  
-  // 开启500毫秒的长按定时器
   longPressTimer = setTimeout(() => {
     document.getElementById('addButton').classList.remove('hidden');
   }, 500);
 }
 
-// ── 长按移动事件（防抖容差） ──
 function handlePressMove(e) {
   if (!longPressTimer) return;
-  
   const currentX = e.touches ? e.touches[0].clientX : e.clientX;
   const currentY = e.touches ? e.touches[0].clientY : e.clientY;
-  
-  // 计算手指移动的绝对距离
   const deltaX = Math.abs(currentX - pressStartX);
   const deltaY = Math.abs(currentY - pressStartY);
-  
-  // 如果移动距离超过10像素，说明在滑屏，取消长按判定
   if (deltaX > 10 || deltaY > 10) {
     clearTimeout(longPressTimer);
     longPressTimer = null;
   }
 }
 
-// ── 长按结束事件 ──
 function handlePressEnd() {
   if (longPressTimer) {
     clearTimeout(longPressTimer);
@@ -662,25 +651,27 @@ function handlePressEnd() {
   }
 }
 
-// ── 绑定移动端触摸事件 ──
 desktopStageEl.addEventListener('touchstart', handlePressStart, { passive: true });
 desktopStageEl.addEventListener('touchmove', handlePressMove, { passive: true });
 desktopStageEl.addEventListener('touchend', handlePressEnd);
 desktopStageEl.addEventListener('touchcancel', handlePressEnd);
-
-// ── 绑定电脑端鼠标事件 ──
 desktopStageEl.addEventListener('mousedown', handlePressStart);
 desktopStageEl.addEventListener('mousemove', handlePressMove);
 window.addEventListener('mouseup', handlePressEnd);
 
-// ── 点击加号按钮的联动逻辑 ──
-document.getElementById('addButton').addEventListener('click', function() {
-  // 点击加号的瞬间，按钮立刻隐身
-  this.classList.add('hidden');
-  
-  // 如果大页面定义了打开小组件面板的函数，则执行它
+document.getElementById('addButton').addEventListener('click', function(e) {
+  e.stopPropagation();
   if (typeof openWidgetPanel === 'function') {
     openWidgetPanel();
+  }
+});
+
+desktopStageEl.addEventListener('click', function(e) {
+  if (e.target === desktopStageEl) {
+    const addButton = document.getElementById('addButton');
+    if (!addButton.classList.contains('hidden')) {
+      addButton.classList.add('hidden');
+    }
   }
 });
 window.addEventListener('mouseup', handlePressEnd);
