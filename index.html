@@ -618,7 +618,7 @@
 };  
 
 
-// ── 长按桌面显示加号（防抖容差与空白处点击隐藏） ──
+​// ── 长按桌面显示加号（加入编辑模式防冲突精准判定） ──
     let longPressTimer = null;
 let pressStartX = 0;
 let pressStartY = 0;
@@ -666,12 +666,16 @@ document.getElementById('addButton').addEventListener('click', function(e) {
   }
 });
 
-desktopStageEl.addEventListener('click', function(e) {
-  if (e.target === desktopStageEl) {
-    const addButton = document.getElementById('addButton');
-    if (!addButton.classList.contains('hidden')) {
-      addButton.classList.add('hidden');
-    }
+document.addEventListener('click', function(e) {
+  const addButton = document.getElementById('addButton');
+  if (!addButton || addButton.classList.contains('hidden')) return;
+
+  if (e.target === addButton || addButton.contains(e.target)) return;
+
+  const isClickingUiElement = e.target.closest('.app-icon, .widget, #widgetPanel, .widget-group');
+
+  if (!isClickingUiElement) {
+    addButton.classList.add('hidden');
   }
 });
 window.addEventListener('mouseup', handlePressEnd);
