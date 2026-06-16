@@ -618,8 +618,8 @@
 };  
 
 
-​// ── 长按桌面显示加号（加入编辑模式防冲突精准判定） ──
-    let longPressTimer = null;
+// ── 长按桌面显示加号（加入编辑模式防冲突精准判定） ──
+let longPressTimer = null;
 let pressStartX = 0;
 let pressStartY = 0;
 const desktopStageEl = document.getElementById('desktopStage');
@@ -678,6 +678,18 @@ document.addEventListener('click', function(e) {
     addButton.classList.add('hidden');
   }
 });
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js')
+      .then(function(registration) {
+        console.log('ServiceWorker 注册成功');
+      })
+      .catch(function(err) {
+        console.log('ServiceWorker 注册失败: ', err);
+      });
+  });
+}    
 window.addEventListener('mouseup', handlePressEnd);
 
 function bootstrap() {
