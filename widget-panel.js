@@ -9,20 +9,10 @@ let isDragging = false;
 let startY = 0;
 let dragDistance = 0;
 
-function openPanel() {
-  panel.classList.remove('hidden');
-  overlay.style.display = 'block';
-  addButton.classList.add('hidden');
-}
-
 function closePanel() {
   panel.classList.add('hidden');
   overlay.style.display = 'none';
-  addButton.classList.remove('hidden');
 }
-
-// 加号按钮
-addButton.addEventListener('click', openPanel);
 
 // 点击遮罩关闭
 overlay.addEventListener('click', closePanel);
