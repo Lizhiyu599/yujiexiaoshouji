@@ -9,15 +9,6 @@ let isDragging = false;
 let startY = 0;
 let dragDistance = 0;
 
-// ── 先改成点击触发测试 ──
-let longPressTimer;
- const desktopStage = document.getElementById('desktopStage');
-console.log('desktopStage:', desktopStage);
-
-desktopStage.addEventListener('click', function(e) {
-  addButton.classList.remove('hidden');
-});
-
 function openPanel() {
   panel.classList.remove('hidden');
   overlay.style.display = 'block';
@@ -38,9 +29,7 @@ overlay.addEventListener('click', closePanel);
 
 // 点击小导航条关闭
 dragHandle.addEventListener('click', function(e) {
-  if (dragDistance < 5) {
-    closePanel();
-  }
+  if (dragDistance < 5) closePanel();
 });
 
 // 拖拽下滑关闭
@@ -72,7 +61,7 @@ dragHandle.addEventListener('touchend', function(e) {
   setTimeout(function() { dragDistance = 0; }, 300);
 });
 
-// 折叠/展开（延迟执行，等待 DOM 渲染）
+// 折叠/展开
 setTimeout(function() {
   document.querySelectorAll('.widget-header').forEach(function(header) {
     header.addEventListener('click', function() {
