@@ -175,3 +175,76 @@
   opacity: 0;
   pointer-events: none;
 }
+
+/* 2x4 小组件基础外壳 */
+.glass-widget-2x4 {
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+  border-radius: 22px;
+  
+  /* 高渗透毛玻璃 */
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(22px) saturate(190%);
+  -webkit-backdrop-filter: blur(22px) saturate(190%);
+  
+  /* 微拟态双层高光阴影 */
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.04),
+    0 0.5px 0 0 rgba(255, 255, 255, 0.6) inset,
+    0 0 0 0.5px rgba(0, 0, 0, 0.05);
+  
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 左侧：时间数字显示 */
+.widget-time-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.widget-time-digital {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1d1d1f;
+  letter-spacing: -0.5px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.widget-date-text {
+  font-size: 12px;
+  color: #86868b;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* 右侧：头像区域 */
+.widget-avatar-container {
+  position: relative;
+  width: 56px;
+  height: 56px;
+}
+
+.widget-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e8e8ed;
+  box-shadow: 
+    inset 0 2px 4px rgba(0,0,0,0.1),
+    0 1px 2px rgba(255,255,255,0.8);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+}
+
+/* 隐藏的上传按钮 */
+.avatar-file-input {
+  display: none;
+}
